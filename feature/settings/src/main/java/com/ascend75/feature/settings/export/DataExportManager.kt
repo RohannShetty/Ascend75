@@ -1,4 +1,4 @@
-package com.ascend75.core.common.export
+package com.ascend75.feature.settings.export
 
 import com.ascend75.core.database.dao.ChallengeDao
 import com.ascend75.core.database.dao.DailyRecordDao

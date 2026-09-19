@@ -2,7 +2,7 @@ package com.ascend75.feature.settings
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ascend75.core.common.export.DataExportManager
+import com.ascend75.feature.settings.export.DataExportManager
 import com.ascend75.core.crypto.VaultFileStorage
 import com.ascend75.core.datastore.AscendPreferencesDataSource
 import com.ascend75.core.datastore.UserPreferences
