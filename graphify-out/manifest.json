@@ -1,0 +1,1178 @@
+{
+  ".agents/skills/extract-static-html/scripts/extract_inline_html.ts": {
+    "mtime": 1789812347.084134,
+    "seen": 1789816919.4533222,
+    "ast_hash": "4677e24e8427db538ecdc59be6d98dc0",
+    "semantic_hash": ""
+  },
+  ".agents/skills/extract-static-html/scripts/post_process.ts": {
+    "mtime": 1789812347.084134,
+    "seen": 1789816919.453328,
+    "ast_hash": "9545b3b7f61dca4364ce2f93b09b223d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/extract-static-html/scripts/snapshot.ts": {
+    "mtime": 1789812347.085645,
+    "seen": 1789816919.4533308,
+    "ast_hash": "c5de94cdee34583a0b17c231aa117043",
+    "semantic_hash": ""
+  },
+  ".agents/skills/manage-design-system/examples/metadata.json": {
+    "mtime": 1789812347.0882206,
+    "seen": 1789816919.4533322,
+    "ast_hash": "4ea64de9933fa04818e43aeca2036eb5",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-components/examples/gold-standard-card.tsx": {
+    "mtime": 1789812347.0555723,
+    "seen": 1789816919.4533339,
+    "ast_hash": "5f83eb4c9a4964262fe1f2137af2ee94",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-components/package.json": {
+    "mtime": 1789812347.0555723,
+    "seen": 1789816919.4533353,
+    "ast_hash": "bd228ad5fd162ce8d750701301f0af5d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-components/resources/component-template.tsx": {
+    "mtime": 1789812347.0565777,
+    "seen": 1789816919.4533365,
+    "ast_hash": "8ca96b746d85cfb807645e330806c65e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-components/resources/style-guide.json": {
+    "mtime": 1789812347.0581818,
+    "seen": 1789816919.453338,
+    "ast_hash": "7e66f758ccae39526670c084f439a16e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-components/scripts/fetch-stitch.sh": {
+    "mtime": 1789812347.0591905,
+    "seen": 1789816919.4533389,
+    "ast_hash": "3b27a58087cd6028a0e12c0559ac9542",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-components/scripts/validate.js": {
+    "mtime": 1789812347.0591905,
+    "seen": 1789816919.45334,
+    "ast_hash": "96e5f4c8dcf5f2c6bd7da066a954d68e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-native/examples/gold-standard-card.tsx": {
+    "mtime": 1789812347.0613906,
+    "seen": 1789816919.4533417,
+    "ast_hash": "f4de81320239935c5e8b97f7e8c339b3",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-native/package.json": {
+    "mtime": 1789812347.062397,
+    "seen": 1789816919.453343,
+    "ast_hash": "60c2986ac1778d48760b5b4dc27ea20d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-native/resources/component-template.tsx": {
+    "mtime": 1789812347.0634503,
+    "seen": 1789816919.453344,
+    "ast_hash": "ead08efc266a4aa30467b22cd2168d96",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-native/scripts/fetch-stitch.sh": {
+    "mtime": 1789812347.0649562,
+    "seen": 1789816919.4533453,
+    "ast_hash": "8a6579a2575c6417a346d6a5e3a2df17",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-native/scripts/validate.js": {
+    "mtime": 1789812347.065539,
+    "seen": 1789816919.4533463,
+    "ast_hash": "23fe386e4a6856da46e3bcc4c1f8ee4c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/remotion/examples/WalkthroughComposition.tsx": {
+    "mtime": 1789812347.068545,
+    "seen": 1789816919.4533474,
+    "ast_hash": "45615e04fa1194942415cc47ac48ba9a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/remotion/examples/screens.json": {
+    "mtime": 1789812347.068545,
+    "seen": 1789816919.4533484,
+    "ast_hash": "3c4dc92a2aebe782a7c18325c4506eed",
+    "semantic_hash": ""
+  },
+  ".agents/skills/remotion/resources/screen-slide-template.tsx": {
+    "mtime": 1789812347.0695448,
+    "seen": 1789816919.4533494,
+    "ast_hash": "5bee2cf7e90b097252c38c870a206821",
+    "semantic_hash": ""
+  },
+  ".agents/skills/remotion/scripts/download-stitch-asset.sh": {
+    "mtime": 1789812347.07077,
+    "seen": 1789816919.4533505,
+    "ast_hash": "789977211bdcda656e4e1bf5ac53158c",
+    "semantic_hash": ""
+  },
+  ".agents/skills/shadcn-ui/examples/auth-layout.tsx": {
+    "mtime": 1789812347.071772,
+    "seen": 1789816919.4533517,
+    "ast_hash": "9bc762e6fe283bd45bc8900b38d6dedc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/shadcn-ui/examples/data-table.tsx": {
+    "mtime": 1789812347.073277,
+    "seen": 1789816919.453353,
+    "ast_hash": "5fc5b58f02aa0e8d68a0156ed6118485",
+    "semantic_hash": ""
+  },
+  ".agents/skills/shadcn-ui/examples/form-pattern.tsx": {
+    "mtime": 1789812347.073277,
+    "seen": 1789816919.453354,
+    "ast_hash": "38481e98ce3a18b601d056426d200532",
+    "semantic_hash": ""
+  },
+  ".agents/skills/shadcn-ui/scripts/verify-setup.sh": {
+    "mtime": 1789812347.0758753,
+    "seen": 1789816919.4533558,
+    "ast_hash": "182cbe74dbd0bddecf6f24308eededd2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/upload-to-stitch/scripts/upload_to_stitch.py": {
+    "mtime": 1789812347.0925481,
+    "seen": 1789816919.4533567,
+    "ast_hash": "240eb7fc9c2e5786f5d5f017af0adf40",
+    "semantic_hash": ""
+  },
+  "app/build.gradle.kts": {
+    "mtime": 1789816356.0885332,
+    "seen": 1789816919.4533582,
+    "ast_hash": "adfc9e501bd944efbd60bd52028364c7",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/ascend75/app/AscendApplication.kt": {
+    "mtime": 1789816877.4958136,
+    "seen": 1789816919.4533591,
+    "ast_hash": "87a7ee8721e1846483aa3077c7abacd5",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/ascend75/app/MainActivity.kt": {
+    "mtime": 1789816885.2860606,
+    "seen": 1789816919.4533603,
+    "ast_hash": "752162ca832ee9318e171d66f1a51ab5",
+    "semantic_hash": ""
+  },
+  "app/src/main/java/com/ascend75/app/navigation/Screen.kt": {
+    "mtime": 1789816880.9582975,
+    "seen": 1789816919.4533615,
+    "ast_hash": "f84b37ed56f3b4f19fb37ee1e8cfe7d2",
+    "semantic_hash": ""
+  },
+  "app/src/test/java/com/ascend75/app/AscendEndToEndJourneyTest.kt": {
+    "mtime": 1789816899.2138834,
+    "seen": 1789816919.4533625,
+    "ast_hash": "aaf4c071f07766354cc9764b31b75cfd",
+    "semantic_hash": ""
+  },
+  "build.gradle.kts": {
+    "mtime": 1789816348.0462878,
+    "seen": 1789816919.4533637,
+    "ast_hash": "64582dafe1b28ec67f0854877e693461",
+    "semantic_hash": ""
+  },
+  "core/common/build.gradle.kts": {
+    "mtime": 1789816363.6193526,
+    "seen": 1789816919.453365,
+    "ast_hash": "ff55131ab5c992434311471b6863028c",
+    "semantic_hash": ""
+  },
+  "core/common/src/main/java/com/ascend75/core/common/domain/ChallengeMode.kt": {
+    "mtime": 1789816531.617044,
+    "seen": 1789816919.453366,
+    "ast_hash": "9c66f0213b5e69f71d56d6a6b1352df7",
+    "semantic_hash": ""
+  },
+  "core/common/src/main/java/com/ascend75/core/common/domain/ChallengeRulesEngine.kt": {
+    "mtime": 1789816540.7611222,
+    "seen": 1789816919.453367,
+    "ast_hash": "afd059635707614c3b241d3e9b8aa883",
+    "semantic_hash": ""
+  },
+  "core/common/src/main/java/com/ascend75/core/common/domain/DayBoundaryEvaluator.kt": {
+    "mtime": 1789816535.6428468,
+    "seen": 1789816919.4533684,
+    "ast_hash": "5ad9dc354218573a944c982b81281f3e",
+    "semantic_hash": ""
+  },
+  "core/common/src/main/java/com/ascend75/core/common/export/DataExportManager.kt": {
+    "mtime": 1789816849.96831,
+    "seen": 1789816919.4533694,
+    "ast_hash": "3b0a4471ea526c0f1f0e0d8096a1f52a",
+    "semantic_hash": ""
+  },
+  "core/common/src/test/java/com/ascend75/core/common/domain/ChallengeRulesEngineTest.kt": {
+    "mtime": 1789816545.950022,
+    "seen": 1789816919.4533706,
+    "ast_hash": "ce84756829058146b57b371dbb3ac175",
+    "semantic_hash": ""
+  },
+  "core/common/src/test/java/com/ascend75/core/common/export/DataWipeIntegrationTest.kt": {
+    "mtime": 1789816865.3885999,
+    "seen": 1789816919.4533718,
+    "ast_hash": "91b2d5a366aa89617d1328b155299dcd",
+    "semantic_hash": ""
+  },
+  "core/crypto/build.gradle.kts": {
+    "mtime": 1789816379.691941,
+    "seen": 1789816919.4533727,
+    "ast_hash": "25cce9151d4c80d06f0e06174dafe669",
+    "semantic_hash": ""
+  },
+  "core/crypto/src/main/java/com/ascend75/core/crypto/BiometricAuthHelper.kt": {
+    "mtime": 1789816709.307252,
+    "seen": 1789816919.4533737,
+    "ast_hash": "077bfbe9b07ee106f334bbddfe359e35",
+    "semantic_hash": ""
+  },
+  "core/crypto/src/main/java/com/ascend75/core/crypto/KeystoreManager.kt": {
+    "mtime": 1789816700.8301637,
+    "seen": 1789816919.4533749,
+    "ast_hash": "5282ef5d7e8976389d6fbb7d748bbd08",
+    "semantic_hash": ""
+  },
+  "core/crypto/src/main/java/com/ascend75/core/crypto/VaultFileStorage.kt": {
+    "mtime": 1789816705.60101,
+    "seen": 1789816919.453376,
+    "ast_hash": "8410cb81c8d9eab9d9626cb3c632bc1b",
+    "semantic_hash": ""
+  },
+  "core/crypto/src/main/java/com/ascend75/core/crypto/di/CryptoModule.kt": {
+    "mtime": 1789816894.2812622,
+    "seen": 1789816919.4533772,
+    "ast_hash": "abb2d1b98895e19fa5c57387572da5e8",
+    "semantic_hash": ""
+  },
+  "core/crypto/src/test/java/com/ascend75/core/crypto/VaultCryptoTest.kt": {
+    "mtime": 1789816725.3494873,
+    "seen": 1789816919.4533787,
+    "ast_hash": "3a5a45fa4b15f5e4806d5fcf78091390",
+    "semantic_hash": ""
+  },
+  "core/database/build.gradle.kts": {
+    "mtime": 1789816371.2567463,
+    "seen": 1789816919.45338,
+    "ast_hash": "148482c6641d27c621428b83f4381ef6",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/assets/science_cards.json": {
+    "mtime": 1789816799.1512208,
+    "seen": 1789816919.4533813,
+    "ast_hash": "2c3797ae0220dbb745811e087698b8e0",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/AscendDatabase.kt": {
+    "mtime": 1789816500.3318715,
+    "seen": 1789816919.4533825,
+    "ast_hash": "10b9abf6cc5251e646653d9da28eb57a",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/ScienceCardSeeder.kt": {
+    "mtime": 1789816806.3740113,
+    "seen": 1789816919.4533834,
+    "ast_hash": "68ecfe3dcd6141e120ba3ebf8f955f32",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/dao/ChallengeDao.kt": {
+    "mtime": 1789816505.0208752,
+    "seen": 1789816919.4533844,
+    "ast_hash": "c01c6f96ca2590bd89516f6f63ab5410",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/dao/DailyRecordDao.kt": {
+    "mtime": 1789816509.8918214,
+    "seen": 1789816919.4533858,
+    "ast_hash": "281e6280c574211742366a57dda3351d",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/dao/ScienceCardDao.kt": {
+    "mtime": 1789816520.205303,
+    "seen": 1789816919.4533868,
+    "ast_hash": "b20d8428d1f8c85568d6793138b05586",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/dao/TaskEntryDao.kt": {
+    "mtime": 1789816515.2708545,
+    "seen": 1789816919.4533877,
+    "ast_hash": "bd503fc317e5b53fadbf2719bcba9234",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/di/DatabaseModule.kt": {
+    "mtime": 1789816889.4805427,
+    "seen": 1789816919.4533887,
+    "ast_hash": "582ea17bf0bc26688f5ba54d32a7341b",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/entities/ChallengeInstanceEntity.kt": {
+    "mtime": 1789816465.3344786,
+    "seen": 1789816919.4533901,
+    "ast_hash": "412c34d208b323072c874033b500a1c9",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/entities/DailyRecordEntity.kt": {
+    "mtime": 1789816468.8303556,
+    "seen": 1789816919.453391,
+    "ast_hash": "2141d1c097355f3f0575fa75d0e46d8d",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/entities/DailyRecordWithTasks.kt": {
+    "mtime": 1789816496.7277725,
+    "seen": 1789816919.453392,
+    "ast_hash": "0756368c43f64e44da73d1e4e3468e65",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/entities/ProgressPhotoEntity.kt": {
+    "mtime": 1789816490.4122362,
+    "seen": 1789816919.4533935,
+    "ast_hash": "75149088cde0e56a829ece3dc743c0bd",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/entities/ReadingSessionEntity.kt": {
+    "mtime": 1789816487.5004804,
+    "seen": 1789816919.4533944,
+    "ast_hash": "fc69fd8570057b9a7af482ef14679cde",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/entities/ScienceCardEntity.kt": {
+    "mtime": 1789816493.6655595,
+    "seen": 1789816919.4533956,
+    "ast_hash": "e21d223de41619a9f9e929d51490f7df",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/entities/TaskEntryEntity.kt": {
+    "mtime": 1789816472.055814,
+    "seen": 1789816919.453397,
+    "ast_hash": "6e5b89142f2ca8ab8dae49034c1c05ee",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/entities/WaterLogEntity.kt": {
+    "mtime": 1789816479.1776805,
+    "seen": 1789816919.4533982,
+    "ast_hash": "6b7efc5834944e031c8375157dbb15db",
+    "semantic_hash": ""
+  },
+  "core/database/src/main/java/com/ascend75/core/database/entities/WorkoutSessionEntity.kt": {
+    "mtime": 1789816475.860389,
+    "seen": 1789816919.4533992,
+    "ast_hash": "2ba8b55e1520075aaba11f8f0da0af7c",
+    "semantic_hash": ""
+  },
+  "core/database/src/test/java/com/ascend75/core/database/ChallengeDaoTest.kt": {
+    "mtime": 1789816523.909773,
+    "seen": 1789816919.4534004,
+    "ast_hash": "082f5a6a56e6a9445d0b0ec8b0e727b6",
+    "semantic_hash": ""
+  },
+  "core/database/src/test/java/com/ascend75/core/database/ScienceCardSeederTest.kt": {
+    "mtime": 1789816813.3885021,
+    "seen": 1789816919.4534013,
+    "ast_hash": "cfde3979f67e7cdbcfe532113b04a99e",
+    "semantic_hash": ""
+  },
+  "core/datastore/build.gradle.kts": {
+    "mtime": 1789816376.495333,
+    "seen": 1789816919.4534025,
+    "ast_hash": "f59a7839e522460dbe92d7c6a395a7e2",
+    "semantic_hash": ""
+  },
+  "core/datastore/src/main/java/com/ascend75/core/datastore/AscendPreferencesDataSource.kt": {
+    "mtime": 1789816557.535069,
+    "seen": 1789816919.4534037,
+    "ast_hash": "8c5d77ee9faf63db6f8f99f895f9a2db",
+    "semantic_hash": ""
+  },
+  "core/datastore/src/main/java/com/ascend75/core/datastore/UserPreferences.kt": {
+    "mtime": 1789816552.4179282,
+    "seen": 1789816919.4534047,
+    "ast_hash": "c7d276696cec42de49b888e6ddfd6132",
+    "semantic_hash": ""
+  },
+  "core/datastore/src/test/java/com/ascend75/core/datastore/UserPreferencesTest.kt": {
+    "mtime": 1789816561.9763021,
+    "seen": 1789816919.4534059,
+    "ast_hash": "2f827575be858515e33c283e41d07771",
+    "semantic_hash": ""
+  },
+  "core/designsystem/build.gradle.kts": {
+    "mtime": 1789816367.3841436,
+    "seen": 1789816919.453407,
+    "ast_hash": "fd6c30ccbe90ac81171f832153faba05",
+    "semantic_hash": ""
+  },
+  "core/designsystem/src/main/java/com/ascend75/core/designsystem/components/AscendButton.kt": {
+    "mtime": 1789816442.9059792,
+    "seen": 1789816919.4534082,
+    "ast_hash": "e14d9ca4e3335ca0ed4fb194b874ac56",
+    "semantic_hash": ""
+  },
+  "core/designsystem/src/main/java/com/ascend75/core/designsystem/components/AscendProgressRing.kt": {
+    "mtime": 1789816451.3872616,
+    "seen": 1789816919.4534092,
+    "ast_hash": "094d061634710c75334ebab2c41457b6",
+    "semantic_hash": ""
+  },
+  "core/designsystem/src/main/java/com/ascend75/core/designsystem/components/GlassCard.kt": {
+    "mtime": 1789816446.9812312,
+    "seen": 1789816919.4534106,
+    "ast_hash": "d4928c70574e8d2bc62e0747d9919dcc",
+    "semantic_hash": ""
+  },
+  "core/designsystem/src/main/java/com/ascend75/core/designsystem/components/HabitCheckCard.kt": {
+    "mtime": 1789816455.995433,
+    "seen": 1789816919.4534116,
+    "ast_hash": "482c87b75e6155a0e96a298c11f57892",
+    "semantic_hash": ""
+  },
+  "core/designsystem/src/main/java/com/ascend75/core/designsystem/theme/Color.kt": {
+    "mtime": 1789816420.0472195,
+    "seen": 1789816919.4534128,
+    "ast_hash": "c09f42e9b6898829d0f110d14d787fbb",
+    "semantic_hash": ""
+  },
+  "core/designsystem/src/main/java/com/ascend75/core/designsystem/theme/Shape.kt": {
+    "mtime": 1789816425.5132692,
+    "seen": 1789816919.453414,
+    "ast_hash": "e8100dbb85067cdd869b5d527d775c94",
+    "semantic_hash": ""
+  },
+  "core/designsystem/src/main/java/com/ascend75/core/designsystem/theme/Theme.kt": {
+    "mtime": 1789816428.616675,
+    "seen": 1789816919.4534152,
+    "ast_hash": "0ba96e84a2ba18e6c46a3789500349d5",
+    "semantic_hash": ""
+  },
+  "core/designsystem/src/main/java/com/ascend75/core/designsystem/theme/Type.kt": {
+    "mtime": 1789816423.1673303,
+    "seen": 1789816919.453416,
+    "ast_hash": "93da2dc22102d055abb6e77f495bdbf6",
+    "semantic_hash": ""
+  },
+  "core/designsystem/src/test/java/com/ascend75/core/designsystem/theme/AccessibilityAuditTest.kt": {
+    "mtime": 1789816869.5903988,
+    "seen": 1789816919.4534175,
+    "ast_hash": "2c71b7559ee7d5dbb512d14dbdd39a52",
+    "semantic_hash": ""
+  },
+  "core/designsystem/src/test/java/com/ascend75/core/designsystem/theme/ThemeContrastTest.kt": {
+    "mtime": 1789816434.2817805,
+    "seen": 1789816919.4534185,
+    "ast_hash": "c5e9b39c22c8c7309484ceb97dfd55f4",
+    "semantic_hash": ""
+  },
+  "core/notifications/build.gradle.kts": {
+    "mtime": 1789816383.5574398,
+    "seen": 1789816919.4534197,
+    "ast_hash": "9dea1aafd820f92509e47f2bd8f9ba30",
+    "semantic_hash": ""
+  },
+  "core/notifications/src/main/java/com/ascend75/core/notifications/NotificationChannelsManager.kt": {
+    "mtime": 1789816734.763001,
+    "seen": 1789816919.4534209,
+    "ast_hash": "3f52cfa7a59e1d26fdb022610b3126f3",
+    "semantic_hash": ""
+  },
+  "core/notifications/src/main/java/com/ascend75/core/notifications/ScheduleEvaluatorWorker.kt": {
+    "mtime": 1789816757.9760792,
+    "seen": 1789816919.453422,
+    "ast_hash": "3d6e143f2dfdcd66e28ee1cb7017ca46",
+    "semantic_hash": ""
+  },
+  "core/notifications/src/main/java/com/ascend75/core/notifications/SmartReminderScheduler.kt": {
+    "mtime": 1789816739.5881834,
+    "seen": 1789816919.4534233,
+    "ast_hash": "01970125260ca7057e1be968231251eb",
+    "semantic_hash": ""
+  },
+  "core/notifications/src/main/java/com/ascend75/core/notifications/receivers/BootReceiver.kt": {
+    "mtime": 1789816751.8330674,
+    "seen": 1789816919.4534245,
+    "ast_hash": "8cd82771a53a0638c985b5041d960914",
+    "semantic_hash": ""
+  },
+  "core/notifications/src/main/java/com/ascend75/core/notifications/receivers/NotificationActionReceiver.kt": {
+    "mtime": 1789816747.4370244,
+    "seen": 1789816919.4534256,
+    "ast_hash": "0ad0ba30f808005af42bb9abd74fe2cf",
+    "semantic_hash": ""
+  },
+  "core/notifications/src/main/java/com/ascend75/core/notifications/receivers/NotificationAlarmReceiver.kt": {
+    "mtime": 1789816743.998852,
+    "seen": 1789816919.4534266,
+    "ast_hash": "7b03e32240008cf817d0f98ca7478208",
+    "semantic_hash": ""
+  },
+  "core/notifications/src/main/java/com/ascend75/core/notifications/receivers/TimezoneReceiver.kt": {
+    "mtime": 1789816754.770439,
+    "seen": 1789816919.453428,
+    "ast_hash": "ac182dba80c34d1572f92e3c436e01c1",
+    "semantic_hash": ""
+  },
+  "core/notifications/src/test/java/com/ascend75/core/notifications/SmartReminderSchedulerTest.kt": {
+    "mtime": 1789816761.6870403,
+    "seen": 1789816919.45343,
+    "ast_hash": "788cb96100e48b3083cc46bad9f733f8",
+    "semantic_hash": ""
+  },
+  "feature/dashboard/build.gradle.kts": {
+    "mtime": 1789816392.411344,
+    "seen": 1789816919.4534314,
+    "ast_hash": "68443ea340eb68c5634f7ca6517bef58",
+    "semantic_hash": ""
+  },
+  "feature/dashboard/src/main/java/com/ascend75/feature/dashboard/DashboardScreen.kt": {
+    "mtime": 1789816625.3656933,
+    "seen": 1789816919.4534323,
+    "ast_hash": "ba6ae06265d41a6c3342261b49c73e78",
+    "semantic_hash": ""
+  },
+  "feature/dashboard/src/main/java/com/ascend75/feature/dashboard/DashboardUiState.kt": {
+    "mtime": 1789816598.89756,
+    "seen": 1789816919.4534335,
+    "ast_hash": "50d9930f4210a8fcdc8fa8dbe4b6927b",
+    "semantic_hash": ""
+  },
+  "feature/dashboard/src/main/java/com/ascend75/feature/dashboard/DashboardViewModel.kt": {
+    "mtime": 1789816605.017736,
+    "seen": 1789816919.4534347,
+    "ast_hash": "be572dd25d1c8ffc3cd11ae5f86f34a3",
+    "semantic_hash": ""
+  },
+  "feature/dashboard/src/main/java/com/ascend75/feature/dashboard/components/DayResetDialog.kt": {
+    "mtime": 1789816610.2124767,
+    "seen": 1789816919.453436,
+    "ast_hash": "6347b8109390ebfe0a02e95284bf1818",
+    "semantic_hash": ""
+  },
+  "feature/dashboard/src/main/java/com/ascend75/feature/dashboard/components/MilestoneCelebrationDialog.kt": {
+    "mtime": 1789816839.3811042,
+    "seen": 1789816919.4534369,
+    "ast_hash": "f154a14eb86d4373f917dcffbc437d25",
+    "semantic_hash": ""
+  },
+  "feature/dashboard/src/main/java/com/ascend75/feature/dashboard/components/TaskDetailBottomSheet.kt": {
+    "mtime": 1789816617.6679027,
+    "seen": 1789816919.453438,
+    "ast_hash": "1e551844b45564eb2c9e93bfd511d3aa",
+    "semantic_hash": ""
+  },
+  "feature/dashboard/src/test/java/com/ascend75/feature/dashboard/DashboardViewModelTest.kt": {
+    "mtime": 1789816628.7267313,
+    "seen": 1789816919.453439,
+    "ast_hash": "15ff1133c9415e6c340753953681480f",
+    "semantic_hash": ""
+  },
+  "feature/learn/build.gradle.kts": {
+    "mtime": 1789816409.0835197,
+    "seen": 1789816919.4534402,
+    "ast_hash": "6a943cf1a6e70a1dc4cd771b84dfc398",
+    "semantic_hash": ""
+  },
+  "feature/learn/src/main/java/com/ascend75/feature/learn/ScienceCardDetailScreen.kt": {
+    "mtime": 1789816828.0657537,
+    "seen": 1789816919.4534414,
+    "ast_hash": "bcef754d6e8d6af23ce58e79f6766b16",
+    "semantic_hash": ""
+  },
+  "feature/learn/src/main/java/com/ascend75/feature/learn/ScienceLibraryScreen.kt": {
+    "mtime": 1789816833.7573996,
+    "seen": 1789816919.4534423,
+    "ast_hash": "7ef718ec4fe50ea8d3f22874b464ffb4",
+    "semantic_hash": ""
+  },
+  "feature/learn/src/main/java/com/ascend75/feature/learn/ScienceLibraryViewModel.kt": {
+    "mtime": 1789816818.164249,
+    "seen": 1789816919.4534435,
+    "ast_hash": "954496ef2e48ffc340252fb1f34edec0",
+    "semantic_hash": ""
+  },
+  "feature/onboarding/build.gradle.kts": {
+    "mtime": 1789816388.0808084,
+    "seen": 1789816919.4534447,
+    "ast_hash": "2562a56d7d8949dfdcb631ef67919c57",
+    "semantic_hash": ""
+  },
+  "feature/onboarding/src/main/java/com/ascend75/feature/onboarding/OnboardingScreen.kt": {
+    "mtime": 1789816588.097006,
+    "seen": 1789816919.453446,
+    "ast_hash": "aa5e4acac5a10b9e4e01ffc7f995e1e6",
+    "semantic_hash": ""
+  },
+  "feature/onboarding/src/main/java/com/ascend75/feature/onboarding/OnboardingUiState.kt": {
+    "mtime": 1789816570.5820956,
+    "seen": 1789816919.4534469,
+    "ast_hash": "a92a9bc6c9059e84e87228060d15dbdb",
+    "semantic_hash": ""
+  },
+  "feature/onboarding/src/main/java/com/ascend75/feature/onboarding/OnboardingViewModel.kt": {
+    "mtime": 1789816577.7425826,
+    "seen": 1789816919.4534483,
+    "ast_hash": "f2e6ada0a705b675f4ba587dfd885056",
+    "semantic_hash": ""
+  },
+  "feature/photos/build.gradle.kts": {
+    "mtime": 1789816405.7277198,
+    "seen": 1789816919.4534495,
+    "ast_hash": "1c534a85e34e77f03cd794dcba3773ec",
+    "semantic_hash": ""
+  },
+  "feature/photos/src/main/java/com/ascend75/feature/photos/PhotoVaultScreen.kt": {
+    "mtime": 1789816722.2242012,
+    "seen": 1789816919.4534504,
+    "ast_hash": "2f9cbc5219f63a8963bceb95eb59f2f9",
+    "semantic_hash": ""
+  },
+  "feature/photos/src/main/java/com/ascend75/feature/photos/PhotoVaultViewModel.kt": {
+    "mtime": 1789816715.1866274,
+    "seen": 1789816919.4534519,
+    "ast_hash": "860bb642690302260bce840f8ff240c5",
+    "semantic_hash": ""
+  },
+  "feature/reading/build.gradle.kts": {
+    "mtime": 1789816401.6201665,
+    "seen": 1789816919.4534528,
+    "ast_hash": "79270991c99082a8908526b7435d82aa",
+    "semantic_hash": ""
+  },
+  "feature/reading/src/main/java/com/ascend75/feature/reading/ReadingScreen.kt": {
+    "mtime": 1789816688.9801183,
+    "seen": 1789816919.453454,
+    "ast_hash": "9391a2f4d650a79299cb0303f6631868",
+    "semantic_hash": ""
+  },
+  "feature/reading/src/main/java/com/ascend75/feature/reading/ReadingViewModel.kt": {
+    "mtime": 1789816681.7843986,
+    "seen": 1789816919.4534552,
+    "ast_hash": "961960c0d916fc1788306b1eb91cdeff",
+    "semantic_hash": ""
+  },
+  "feature/settings/build.gradle.kts": {
+    "mtime": 1789816412.37472,
+    "seen": 1789816919.4534564,
+    "ast_hash": "e671eb23a7cb7bdcc41f0db1a2ea042b",
+    "semantic_hash": ""
+  },
+  "feature/settings/src/main/java/com/ascend75/feature/settings/SettingsScreen.kt": {
+    "mtime": 1789816861.6555996,
+    "seen": 1789816919.4534574,
+    "ast_hash": "9d58348af193916056a057ff1ac986ad",
+    "semantic_hash": ""
+  },
+  "feature/settings/src/main/java/com/ascend75/feature/settings/SettingsViewModel.kt": {
+    "mtime": 1789816854.950186,
+    "seen": 1789816919.4534588,
+    "ast_hash": "9ec64c4fb76fdbaae954a42d868fabe0",
+    "semantic_hash": ""
+  },
+  "feature/water/build.gradle.kts": {
+    "mtime": 1789816398.538206,
+    "seen": 1789816919.4534597,
+    "ast_hash": "6a6c4e201250eec75fa1b9cfcca99ea1",
+    "semantic_hash": ""
+  },
+  "feature/water/src/main/java/com/ascend75/feature/water/WaterScreen.kt": {
+    "mtime": 1789816672.3254373,
+    "seen": 1789816919.453461,
+    "ast_hash": "1f0da1ddd590885ec6aac43b030e6f1b",
+    "semantic_hash": ""
+  },
+  "feature/water/src/main/java/com/ascend75/feature/water/WaterViewModel.kt": {
+    "mtime": 1789816665.9504676,
+    "seen": 1789816919.4534621,
+    "ast_hash": "7ef30a3bc875e69f24a9ef3b10c68bee",
+    "semantic_hash": ""
+  },
+  "feature/water/src/test/java/com/ascend75/feature/water/WaterRateLimiterTest.kt": {
+    "mtime": 1789816676.5595405,
+    "seen": 1789816919.4534633,
+    "ast_hash": "fa81d1b9ee4034b6ae40126cd1f40a5b",
+    "semantic_hash": ""
+  },
+  "feature/workout/build.gradle.kts": {
+    "mtime": 1789816395.3837712,
+    "seen": 1789816919.4534645,
+    "ast_hash": "9c7919e34aede5946dc9c768878f250f",
+    "semantic_hash": ""
+  },
+  "feature/workout/src/main/java/com/ascend75/feature/workout/WorkoutScreen.kt": {
+    "mtime": 1789816660.0759535,
+    "seen": 1789816919.4534657,
+    "ast_hash": "f38cb9f5b867703bdb77230bbcc5e586",
+    "semantic_hash": ""
+  },
+  "feature/workout/src/main/java/com/ascend75/feature/workout/WorkoutTimerService.kt": {
+    "mtime": 1789816647.0940647,
+    "seen": 1789816919.4534667,
+    "ast_hash": "a7b79667e562e7e645e965e31f021b7e",
+    "semantic_hash": ""
+  },
+  "feature/workout/src/main/java/com/ascend75/feature/workout/WorkoutViewModel.kt": {
+    "mtime": 1789816652.3932874,
+    "seen": 1789816919.4534678,
+    "ast_hash": "c3bac645e24058d29e57b7f7a9bc2861",
+    "semantic_hash": ""
+  },
+  "settings.gradle.kts": {
+    "mtime": 1789816345.4864192,
+    "seen": 1789816919.4534693,
+    "ast_hash": "6f97f26aadb54f3acdee881a37c566f8",
+    "semantic_hash": ""
+  },
+  ".agents/rules/graphify.md": {
+    "mtime": 1789812033.1194346,
+    "seen": 1789816919.4534702,
+    "ast_hash": "a0e4d192b9e2e17256124dbfc8e24e6a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/code-to-design/SKILL.md": {
+    "mtime": 1789812347.0778823,
+    "seen": 1789816919.4534714,
+    "ast_hash": "e2ae4b4d48a350cfca6fc15540a6d81e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/design-md/README.md": {
+    "mtime": 1789812347.09455,
+    "seen": 1789816919.4534726,
+    "ast_hash": "f18e1c4c6e59ac67ce06278a64dc3e14",
+    "semantic_hash": ""
+  },
+  ".agents/skills/design-md/SKILL.md": {
+    "mtime": 1789812347.0960772,
+    "seen": 1789816919.4534736,
+    "ast_hash": "0cf43f06542561a9faa9d554c507d409",
+    "semantic_hash": ""
+  },
+  ".agents/skills/design-md/examples/DESIGN.md": {
+    "mtime": 1789812347.0967004,
+    "seen": 1789816919.4534748,
+    "ast_hash": "c970c3690bb2f9129022864d16a70b6e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/enhance-prompt/README.md": {
+    "mtime": 1789812347.0967004,
+    "seen": 1789816919.453476,
+    "ast_hash": "03ae99f197e9a27810a55306cb1d5503",
+    "semantic_hash": ""
+  },
+  ".agents/skills/enhance-prompt/SKILL.md": {
+    "mtime": 1789812347.0967004,
+    "seen": 1789816919.4534771,
+    "ast_hash": "b9296710352c915853b7efb31926e08a",
+    "semantic_hash": ""
+  },
+  ".agents/skills/enhance-prompt/references/KEYWORDS.md": {
+    "mtime": 1789812347.0982544,
+    "seen": 1789816919.453478,
+    "ast_hash": "ba099dba18ab099922b6962c153a3fcc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/extract-design-md/SKILL.md": {
+    "mtime": 1789812347.078921,
+    "seen": 1789816919.4534795,
+    "ast_hash": "131e24e998c26c0fadcaf2a7daaa5f4f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/extract-design-md/examples/DESIGN.md": {
+    "mtime": 1789812347.0799215,
+    "seen": 1789816919.4534805,
+    "ast_hash": "59a6c0906e5d2075600234e93e84e3b8",
+    "semantic_hash": ""
+  },
+  ".agents/skills/extract-design-md/references/angular.md": {
+    "mtime": 1789812347.0799215,
+    "seen": 1789816919.4534814,
+    "ast_hash": "edec1a367e2d82d98aab18db5c79be65",
+    "semantic_hash": ""
+  },
+  ".agents/skills/extract-design-md/references/plain-css.md": {
+    "mtime": 1789812347.0810878,
+    "seen": 1789816919.4534829,
+    "ast_hash": "6f28b349a3885e9195a6243c29c3fae1",
+    "semantic_hash": ""
+  },
+  ".agents/skills/extract-design-md/references/react-tailwind.md": {
+    "mtime": 1789812347.0816205,
+    "seen": 1789816919.4534838,
+    "ast_hash": "1e7422296a416965b56d3fbb903f280e",
+    "semantic_hash": ""
+  },
+  ".agents/skills/extract-design-md/references/svelte.md": {
+    "mtime": 1789812347.0816205,
+    "seen": 1789816919.453485,
+    "ast_hash": "071ddf7c6beb335dcd60db4c6184ad39",
+    "semantic_hash": ""
+  },
+  ".agents/skills/extract-design-md/references/vue.md": {
+    "mtime": 1789812347.0826292,
+    "seen": 1789816919.453486,
+    "ast_hash": "aa1007204a4ba4529b122158a56e561b",
+    "semantic_hash": ""
+  },
+  ".agents/skills/extract-static-html/SKILL.md": {
+    "mtime": 1789812347.0826292,
+    "seen": 1789816919.4534874,
+    "ast_hash": "636f903970a208d78b8892cd79743c90",
+    "semantic_hash": ""
+  },
+  ".agents/skills/generate-design/SKILL.md": {
+    "mtime": 1789812347.0862157,
+    "seen": 1789816919.4534883,
+    "ast_hash": "46e4029c8e8c54a8ae620ccbe9e9e5c6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/generate-design/examples/enhanced-prompt.md": {
+    "mtime": 1789812347.0872211,
+    "seen": 1789816919.4534898,
+    "ast_hash": "450dbfd1139b3a69c71d619de3b52a61",
+    "semantic_hash": ""
+  },
+  ".agents/skills/generate-design/references/design-mappings.md": {
+    "mtime": 1789812347.0872211,
+    "seen": 1789816919.4534907,
+    "ast_hash": "5971e25248ca3c62709d310e16479721",
+    "semantic_hash": ""
+  },
+  ".agents/skills/generate-design/references/prompt-keywords.md": {
+    "mtime": 1789812347.0882206,
+    "seen": 1789816919.4534917,
+    "ast_hash": "5a2468e6fc5b78b7bf86d0937fd73e83",
+    "semantic_hash": ""
+  },
+  ".agents/skills/manage-design-system/SKILL.md": {
+    "mtime": 1789812347.0882206,
+    "seen": 1789816919.4534929,
+    "ast_hash": "68ab4e827fca778f4dab56896f451f21",
+    "semantic_hash": ""
+  },
+  ".agents/skills/manage-design-system/reference/tool-schema.md": {
+    "mtime": 1789812347.089725,
+    "seen": 1789816919.453494,
+    "ast_hash": "23060671ee11d4e6ec23ee674a37ed33",
+    "semantic_hash": ""
+  },
+  ".agents/skills/openspec-apply-change/SKILL.md": {
+    "mtime": 1789814001.9239376,
+    "seen": 1789816919.453495,
+    "ast_hash": "2519bee2b792cce718781850141004a2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/openspec-archive-change/SKILL.md": {
+    "mtime": 1789814001.9371214,
+    "seen": 1789816919.4534962,
+    "ast_hash": "f6340e8a60cf8c7e1d09f6a625e2a8e1",
+    "semantic_hash": ""
+  },
+  ".agents/skills/openspec-explore/SKILL.md": {
+    "mtime": 1789814001.9202724,
+    "seen": 1789816919.4534974,
+    "ast_hash": "dd2c58a694407728d58ded3eb1d16377",
+    "semantic_hash": ""
+  },
+  ".agents/skills/openspec-propose/SKILL.md": {
+    "mtime": 1789814001.9435678,
+    "seen": 1789816919.4534986,
+    "ast_hash": "998ece47ef8b3c785146e0ba43923440",
+    "semantic_hash": ""
+  },
+  ".agents/skills/openspec-sync-specs/SKILL.md": {
+    "mtime": 1789814001.9318185,
+    "seen": 1789816919.4534996,
+    "ast_hash": "5f10cc8f8717180fb0f9ef83a0a1dcfe",
+    "semantic_hash": ""
+  },
+  ".agents/skills/openspec-update-change/SKILL.md": {
+    "mtime": 1789814001.927986,
+    "seen": 1789816919.4535007,
+    "ast_hash": "e6e4bb6d5e8cb3d5282bdb4012b09b5f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-components/README.md": {
+    "mtime": 1789812347.0529788,
+    "seen": 1789816919.4535017,
+    "ast_hash": "9dab0d2e20988eb8125dc73a21b98eee",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-components/SKILL.md": {
+    "mtime": 1789812347.0544884,
+    "seen": 1789816919.453503,
+    "ast_hash": "1123c396257ecebd5cc0816a7b2c3460",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-components/resources/architecture-checklist.md": {
+    "mtime": 1789812347.0565777,
+    "seen": 1789816919.453504,
+    "ast_hash": "787bbacfa264f4d382f60fa72eb05e55",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-components/resources/stitch-api-reference.md": {
+    "mtime": 1789812347.0576072,
+    "seen": 1789816919.4535053,
+    "ast_hash": "1b7a2272c61fe6388af3b0ac15ffe0e9",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-native/README.md": {
+    "mtime": 1789812347.0601895,
+    "seen": 1789816919.4535062,
+    "ast_hash": "03ef6048679d9b05bef9c0312b84fbb6",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-native/SKILL.md": {
+    "mtime": 1789812347.0601895,
+    "seen": 1789816919.4535074,
+    "ast_hash": "eed7fd1a13f283b74ca1dc5cc829fe34",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-native/resources/architecture-checklist.md": {
+    "mtime": 1789812347.062397,
+    "seen": 1789816919.4535086,
+    "ast_hash": "b42d63e9bd2760fba7fc6bcf4ebb45fe",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-vite-dashboard/README.md": {
+    "mtime": 1789812347.066545,
+    "seen": 1789816919.4535096,
+    "ast_hash": "44f7226c7d1c0213d45876b504756b10",
+    "semantic_hash": ""
+  },
+  ".agents/skills/react-vite-dashboard/SKILL.md": {
+    "mtime": 1789812347.066545,
+    "seen": 1789816919.453511,
+    "ast_hash": "0fff2525bbb6e4a0fe0cf731c6324f7d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/remotion/README.md": {
+    "mtime": 1789812347.067545,
+    "seen": 1789816919.453512,
+    "ast_hash": "35dad823acae995c32df8c9bc2817c8d",
+    "semantic_hash": ""
+  },
+  ".agents/skills/remotion/SKILL.md": {
+    "mtime": 1789812347.067545,
+    "seen": 1789816919.453513,
+    "ast_hash": "06574fc69c2ddfef118faa48dddffecc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/remotion/resources/composition-checklist.md": {
+    "mtime": 1789812347.0695448,
+    "seen": 1789816919.453514,
+    "ast_hash": "6c49b540c3240a763239aa7bb3b469ed",
+    "semantic_hash": ""
+  },
+  ".agents/skills/shadcn-ui/README.md": {
+    "mtime": 1789812347.071772,
+    "seen": 1789816919.4535153,
+    "ast_hash": "0020367ed38e7bfeaa871b9bb809cc78",
+    "semantic_hash": ""
+  },
+  ".agents/skills/shadcn-ui/SKILL.md": {
+    "mtime": 1789812347.071772,
+    "seen": 1789816919.4535162,
+    "ast_hash": "530e9aa98171404331b47ae393b32e46",
+    "semantic_hash": ""
+  },
+  ".agents/skills/shadcn-ui/resources/component-catalog.md": {
+    "mtime": 1789812347.0742834,
+    "seen": 1789816919.4535177,
+    "ast_hash": "e19f26472e164eea7ee3dda940ecaf56",
+    "semantic_hash": ""
+  },
+  ".agents/skills/shadcn-ui/resources/customization-guide.md": {
+    "mtime": 1789812347.0742834,
+    "seen": 1789816919.4535186,
+    "ast_hash": "21f09241bdaaa84c262e7ed5d76b5f5f",
+    "semantic_hash": ""
+  },
+  ".agents/skills/shadcn-ui/resources/migration-guide.md": {
+    "mtime": 1789812347.0752828,
+    "seen": 1789816919.4535196,
+    "ast_hash": "c088d6bfcab25cabe0f08609df3bf4f4",
+    "semantic_hash": ""
+  },
+  ".agents/skills/shadcn-ui/resources/setup-guide.md": {
+    "mtime": 1789812347.0758753,
+    "seen": 1789816919.4535205,
+    "ast_hash": "bfa28ae827d26eefadc89cf60df32d08",
+    "semantic_hash": ""
+  },
+  ".agents/skills/site-md/SKILL.md": {
+    "mtime": 1789812347.09926,
+    "seen": 1789816919.453522,
+    "ast_hash": "d9c09eeefba1672088096ea0e97a7170",
+    "semantic_hash": ""
+  },
+  ".agents/skills/stitch-loop/README.md": {
+    "mtime": 1789812347.09926,
+    "seen": 1789816919.453523,
+    "ast_hash": "bdc8408f806e383be327d7344f0307e5",
+    "semantic_hash": ""
+  },
+  ".agents/skills/stitch-loop/SKILL.md": {
+    "mtime": 1789812347.1005015,
+    "seen": 1789816919.453524,
+    "ast_hash": "548f14fc2ca3a067d21f15972232d208",
+    "semantic_hash": ""
+  },
+  ".agents/skills/stitch-loop/examples/SITE.md": {
+    "mtime": 1789812347.1005015,
+    "seen": 1789816919.4535253,
+    "ast_hash": "5479810c6a046042d946135616fe5b47",
+    "semantic_hash": ""
+  },
+  ".agents/skills/stitch-loop/examples/next-prompt.md": {
+    "mtime": 1789812347.1015017,
+    "seen": 1789816919.4535284,
+    "ast_hash": "10f8d7ad582bbdb6790719684b821d82",
+    "semantic_hash": ""
+  },
+  ".agents/skills/stitch-loop/resources/baton-schema.md": {
+    "mtime": 1789812347.1015017,
+    "seen": 1789816919.4535294,
+    "ast_hash": "0b96c14f5d73d72706beb78228fdeec7",
+    "semantic_hash": ""
+  },
+  ".agents/skills/stitch-loop/resources/site-template.md": {
+    "mtime": 1789812347.102501,
+    "seen": 1789816919.4535306,
+    "ast_hash": "ddfe344ed97183770d102e9b5cd59b82",
+    "semantic_hash": ""
+  },
+  ".agents/skills/taste-design/SKILL.md": {
+    "mtime": 1789812347.102501,
+    "seen": 1789816919.4535317,
+    "ast_hash": "7d594f640bbb722724bb5816027415bc",
+    "semantic_hash": ""
+  },
+  ".agents/skills/taste-design/resources/DESIGN.md": {
+    "mtime": 1789812347.103502,
+    "seen": 1789816919.4535327,
+    "ast_hash": "c091f6ab78955cbe502d45cab9f5feb2",
+    "semantic_hash": ""
+  },
+  ".agents/skills/upload-to-stitch/SKILL.md": {
+    "mtime": 1789812347.0915413,
+    "seen": 1789816919.453534,
+    "ast_hash": "53fb564284051974af4674087aa70aa5",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/graphify.md": {
+    "mtime": 1789812033.1465266,
+    "seen": 1789816919.453535,
+    "ast_hash": "a831cf3669f1e6ab85d8a80ebe655f99",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/opsx-apply.md": {
+    "mtime": 1789814001.9522407,
+    "seen": 1789816919.453536,
+    "ast_hash": "6e5714e82cd101241a32c43a7945e003",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/opsx-archive.md": {
+    "mtime": 1789814001.9600303,
+    "seen": 1789816919.453537,
+    "ast_hash": "e2bfd396cdd3889b7275ad537a01d830",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/opsx-explore.md": {
+    "mtime": 1789814001.9501915,
+    "seen": 1789816919.4535384,
+    "ast_hash": "53d3b4e0064ba1904d0525564b495c54",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/opsx-propose.md": {
+    "mtime": 1789814001.9631433,
+    "seen": 1789816919.4535394,
+    "ast_hash": "f3b456703f7aa2f01c3b5fa8a753e45e",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/opsx-sync.md": {
+    "mtime": 1789814001.957782,
+    "seen": 1789816919.4535406,
+    "ast_hash": "fdce239d21ee512a6bcbf69dee9a8f34",
+    "semantic_hash": ""
+  },
+  ".agents/workflows/opsx-update.md": {
+    "mtime": 1789814001.9548979,
+    "seen": 1789816919.4535413,
+    "ast_hash": "259f54ddb6b3881d06c0b77aa8287b80",
+    "semantic_hash": ""
+  },
+  "DESIGN.md": {
+    "mtime": 1789815819.2945206,
+    "seen": 1789816919.4535427,
+    "ast_hash": "4115a3628cb02fd20a1e56a329254165",
+    "semantic_hash": ""
+  },
+  "openspec/changes/ascend-75-platform/.openspec.yaml": {
+    "mtime": 1789816035.5092995,
+    "seen": 1789816919.4535437,
+    "ast_hash": "75cf8d7a782a9dc39c1083c6a943e514",
+    "semantic_hash": ""
+  },
+  "openspec/changes/ascend-75-platform/design.md": {
+    "mtime": 1789816145.3565712,
+    "seen": 1789816919.4535449,
+    "ast_hash": "ae61470bfcba9a2adbfd2ec2a107d9b9",
+    "semantic_hash": ""
+  },
+  "openspec/changes/ascend-75-platform/proposal.md": {
+    "mtime": 1789816071.376179,
+    "seen": 1789816919.453546,
+    "ast_hash": "24f95d640fc3b839229ded5f1894a7f8",
+    "semantic_hash": ""
+  },
+  "openspec/changes/ascend-75-platform/specs/challenge-engine/spec.md": {
+    "mtime": 1789816100.0439262,
+    "seen": 1789816919.4535472,
+    "ast_hash": "ef82091e17dcf968636eb25488d8285e",
+    "semantic_hash": ""
+  },
+  "openspec/changes/ascend-75-platform/specs/crypto-vault/spec.md": {
+    "mtime": 1789816110.2878792,
+    "seen": 1789816919.4535482,
+    "ast_hash": "e9fae51485746f1882bf63a17f606d35",
+    "semantic_hash": ""
+  },
+  "openspec/changes/ascend-75-platform/specs/design-system/spec.md": {
+    "mtime": 1789816091.6332438,
+    "seen": 1789816919.4535496,
+    "ast_hash": "2a8b8271b86d2e74091ba3f99b05e951",
+    "semantic_hash": ""
+  },
+  "openspec/changes/ascend-75-platform/specs/intelligent-notifications/spec.md": {
+    "mtime": 1789816115.698658,
+    "seen": 1789816919.4535508,
+    "ast_hash": "5e3c0cd6bf076756a5740431ad9a3706",
+    "semantic_hash": ""
+  },
+  "openspec/changes/ascend-75-platform/specs/science-library/spec.md": {
+    "mtime": 1789816120.5171819,
+    "seen": 1789816919.4535522,
+    "ast_hash": "d0d314c26cd9e933b33032ff84c1afd8",
+    "semantic_hash": ""
+  },
+  "openspec/changes/ascend-75-platform/specs/tracking-engines/spec.md": {
+    "mtime": 1789816105.275164,
+    "seen": 1789816919.4535532,
+    "ast_hash": "f6e73355e4a456bcac7d7de1268fa1e1",
+    "semantic_hash": ""
+  },
+  "openspec/changes/ascend-75-platform/tasks.md": {
+    "mtime": 1789816903.172017,
+    "seen": 1789816919.4535542,
+    "ast_hash": "2bf9265e3be0173dfe6b441e44f306fa",
+    "semantic_hash": ""
+  },
+  "openspec/config.yaml": {
+    "mtime": 1789814001.9657094,
+    "seen": 1789816919.4535553,
+    "ast_hash": "a88f7d80935e1a432dc9b5affe49eb27",
+    "semantic_hash": ""
+  }
+}

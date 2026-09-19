@@ -1,0 +1,52 @@
+# Built application files
+*.apk
+*.aab
+*.ap_
+*.dex
+
+# Files for the ART/Dalvik VM
+*.class
+
+# Java / JVM files
+*.log
+
+# Node dependencies
+node_modules/
+**/node_modules/
+
+# Android Studio / IntelliJ IDEA
+.idea/
+.gradle/
+*.iml
+*.ipr
+*.iws
+out/
+captures/
+.externalNativeBuild/
+.cxx/
+
+# Gradle build directories
+build/
+*/build/
+*/*/build/
+*/*/*/build/
+buildOutput/
+
+# Local configuration file (SDK path, NDK, etc.)
+local.properties
+
+# Keystore and signing credentials
+*.jks
+*.keystore
+
+# Google Services (Firebase / Analytics if added)
+google-services.json
+
+# OS-specific files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Agent caches and temporary indexes
+.codegraph/
+graphify-out/cache/
