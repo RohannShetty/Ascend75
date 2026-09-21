@@ -10,5 +10,6 @@ data class UserPreferences(
     val selectedMode: String = "STRICT_75",
     val isBiometricEnabled: Boolean = false,
     val quietHoursStartHour: Int = 22,
-    val quietHoursEndHour: Int = 7
+    val quietHoursEndHour: Int = 7,
+    val lastCelebratedDay: Int = 0
 )

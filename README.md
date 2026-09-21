@@ -25,6 +25,7 @@
 - **Encrypted Biometric Photo Vault**: Progress photos protected by Android Keystore hardware-backed AES-256-GCM encryption with zero leakage to public galleries.
 - **Pre-Seeded 75-Day Science Curriculum**: Peer-reviewed educational cards derived from circadian biology, sleep architecture, dopamine dynamics, and implementation intentions with primary PubMed/DOI citations.
 - **Sovereign Data Sovereignty**: 100% offline Room persistence with single-tap cryptographic zero-fill data erasure.
+- **One Information Architecture, Two Clients**: Today · Trackers · Learn · Vault · More across both the Android app and the bundled web prototype.
 
 ---
 
@@ -62,24 +63,46 @@ Built strictly adhering to modern Android Jetpack guidelines, Clean Architecture
 
 ```
 Ascend75/
-├── app/                               # Root application, Hilt setup, Navigation host
+├── app/                               # Root application, Hilt setup, navigation shell
 ├── core/
-│   ├── common/                        # Dispatchers, ChallengeRulesEngine, DayBoundaryEvaluator, Export
-│   ├── designsystem/                  # Material 3 Theme, Typography, Shapes, Dynamic Stitch Tokens
-│   ├── database/                      # Room Database, Entities, DAOs, Migrations, ScienceCardSeeder
+│   ├── common/                        # ChallengeRulesEngine, DayBoundaryEvaluator, ChallengeMode
+│   ├── designsystem/                  # Material 3 theme, typography, shapes, Stitch tokens, bottom bar
+│   ├── database/                      # Room database, entities, DAOs, ScienceCardSeeder
 │   ├── datastore/                     # Jetpack Preferences DataStore for local state & cutoff schedules
-│   ├── crypto/                        # Android Keystore Manager, VaultFileStorage, BiometricAuthHelper
-│   └── notifications/                 # Channels, WorkManager Worker, AlarmManager Scheduler, Receivers
+│   ├── crypto/                        # Android Keystore manager, VaultFileStorage, BiometricAuthHelper
+│   └── notifications/                 # Channels, WorkManager worker, AlarmManager scheduler, receivers
 └── feature/
     ├── onboarding/                    # 6-step questionnaire, medical disclaimer, cutoff config, mode selection
-    ├── dashboard/                     # Multi-segment progress ring, habit checklist, day reset dialog
+    ├── dashboard/                     # Progress ring, habit checklist, Trackers hub, day/streak engine
     ├── workout/                       # Foreground timer service, workout screen, rest separation warning
-    ├── water/                         # Water ring gauge, quick add, hyponatremia alert dialog
-    ├── reading/                       # Book log, page interval counter, reflection notes
-    ├── photos/                        # Biometric lock gate, encrypted sandbox storage, split comparison
+    ├── water/                         # Water gauge, quick add, hyponatremia alert dialog
+    ├── reading/                       # Book log, page interval counter, session timer, reflection notes
+    ├── photos/                        # Biometric lock gate, encrypted capture, split comparison
     ├── learn/                         # 75-day science library, card detail, DOI links, bookmarks
-    └── settings/                      # Data export, theme toggle, cryptographic zero-wipe data erasure
+    └── settings/                      # Export, sleep cutoff, protocol mode, cryptographic zero-wipe
 ```
+
+### Navigation & Information Architecture
+
+Both clients expose the same five destinations, rendered by a fixed bottom bar
+(`AscendBottomBar` on Android, `AscendTabBar` on web):
+
+| Tab | Destinations it owns |
+| :--- | :--- |
+| **Today** | Dashboard, science-card highlight, daily guardrails checklist |
+| **Trackers** | Trackers hub, Workout timer, Hydration, Reading |
+| **Learn** | 75-day curriculum with in-place card detail and bookmarking |
+| **Vault** | Biometric-gated encrypted progress photos |
+| **More** | Sleep cutoff, protocol mode, JSON export, data wipe, about/disclaimer |
+
+Pressing system back from a non-Today tab returns to Today before exiting. Deep links of the form
+`ascend75://task/<taskId>` (used by the notification actions) resolve the task and open its tracker.
+
+### Web Prototype (`web/`)
+
+A presentational React 19 + Vite prototype mirrors the same five tabs and design tokens for review outside a
+device. It keeps state in memory — no backend, no persistence — and is a companion to, not a replacement for,
+the Android app. See [`web/README.md`](web/README.md).
 
 ---
 
@@ -134,6 +157,11 @@ app/build/outputs/apk/debug/app-debug.apk
 ```bash
 ./gradlew test
 ```
+The suite runs on the JVM (Robolectric where a real `Context` or in-memory Room database is needed) and covers
+the rules engine, day-boundary evaluation, `DailyProtocolRepository` day advancement and streak derivation,
+hydration rate limiting and restore, the reading 10-page gate and session timer, vault file framing,
+photo-vault capture and vault gating, quiet-hours suppression, the science-card asset, and an onboarding → day-2
+journey over the real schema.
 
 ---
 

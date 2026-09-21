@@ -4,8 +4,12 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import com.ascend75.core.database.dao.ChallengeDao
 import com.ascend75.core.database.dao.DailyRecordDao
+import com.ascend75.core.database.dao.ProgressPhotoDao
+import com.ascend75.core.database.dao.ReadingSessionDao
 import com.ascend75.core.database.dao.ScienceCardDao
 import com.ascend75.core.database.dao.TaskEntryDao
+import com.ascend75.core.database.dao.WaterLogDao
+import com.ascend75.core.database.dao.WorkoutSessionDao
 import com.ascend75.core.database.entities.ChallengeInstanceEntity
 import com.ascend75.core.database.entities.DailyRecordEntity
 import com.ascend75.core.database.entities.ProgressPhotoEntity
@@ -34,4 +38,8 @@ abstract class AscendDatabase : RoomDatabase() {
     abstract fun dailyRecordDao(): DailyRecordDao
     abstract fun taskEntryDao(): TaskEntryDao
     abstract fun scienceCardDao(): ScienceCardDao
+    abstract fun workoutSessionDao(): WorkoutSessionDao
+    abstract fun waterLogDao(): WaterLogDao
+    abstract fun readingSessionDao(): ReadingSessionDao
+    abstract fun progressPhotoDao(): ProgressPhotoDao
 }

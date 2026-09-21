@@ -1,5 +1,6 @@
 package com.ascend75.feature.onboarding
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -18,6 +19,8 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
@@ -27,18 +30,20 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.SwitchDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ascend75.core.common.domain.ChallengeMode
 import com.ascend75.core.designsystem.components.AscendButton
 import com.ascend75.core.designsystem.components.AscendButtonVariant
 import com.ascend75.core.designsystem.components.GlassCard
 import com.ascend75.core.designsystem.theme.AscendPalette
 import com.ascend75.core.designsystem.theme.AscendTypography
+import java.util.Locale
 
 @Composable
 fun OnboardingScreen(
@@ -46,7 +51,11 @@ fun OnboardingScreen(
     onFinish: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    BackHandler(enabled = state.currentStep > 1) {
+        viewModel.previousStep()
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -258,6 +267,29 @@ private fun GoalsStep(
             Text(text = level, style = AscendTypography.bodyMedium, color = AscendPalette.OnSurface)
         }
     }
+
+    Spacer(modifier = Modifier.height(20.dp))
+
+    Text(text = "Primary Motivation", style = AscendTypography.labelLarge, color = AscendPalette.Primary)
+    Spacer(modifier = Modifier.height(8.dp))
+    OutlinedTextField(
+        value = state.primaryMotivation,
+        onValueChange = onMotivationChange,
+        modifier = Modifier.fillMaxWidth(),
+        placeholder = {
+            Text(
+                text = "e.g. Mental toughness & circadian alignment",
+                style = AscendTypography.bodySmall,
+                color = AscendPalette.OnSurfaceVariant.copy(alpha = 0.5f)
+            )
+        },
+        colors = OutlinedTextFieldDefaults.colors(
+            focusedBorderColor = AscendPalette.Primary,
+            unfocusedBorderColor = AscendPalette.Outline.copy(alpha = 0.3f)
+        ),
+        minLines = 2,
+        maxLines = 3
+    )
 }
 
 @Composable
@@ -288,7 +320,9 @@ private fun ScheduleStep(
             )
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = String.format("%02d:%02d AM", state.sleepCutoffHour, state.sleepCutoffMinute),
+                text = remember(state.sleepCutoffHour, state.sleepCutoffMinute) {
+                    String.format(Locale.US, "%02d:%02d AM", state.sleepCutoffHour, state.sleepCutoffMinute)
+                },
                 style = AscendTypography.headlineLarge,
                 color = AscendPalette.OnSurface
             )
@@ -365,7 +399,9 @@ private fun TargetsStep(
             Text(text = "DAILY HYDRATION GOAL", style = AscendTypography.labelSmall, color = AscendPalette.Primary)
             Spacer(modifier = Modifier.height(8.dp))
             Text(
-                text = "${state.waterTargetMl} ml (${String.format("%.1f", state.waterTargetMl / 1000.0)} Liters)",
+                text = remember(state.waterTargetMl) {
+                    String.format(Locale.US, "%d ml (%.1f Liters)", state.waterTargetMl, state.waterTargetMl / 1000.0)
+                },
                 style = AscendTypography.headlineSmall,
                 color = AscendPalette.OnSurface
             )

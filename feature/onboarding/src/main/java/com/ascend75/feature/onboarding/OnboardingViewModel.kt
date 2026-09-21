@@ -18,6 +18,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.time.LocalDate
 import java.time.LocalTime
 import java.util.UUID
@@ -106,7 +107,10 @@ class OnboardingViewModel @Inject constructor(
                     mode = state.selectedMode.name,
                     status = "ACTIVE",
                     startedAt = now,
-                    configJson = """{"fitnessLevel":"${state.fitnessLevel}","motivation":"${state.primaryMotivation}"}"""
+                    configJson = JSONObject()
+                        .put("fitnessLevel", state.fitnessLevel)
+                        .put("motivation", state.primaryMotivation)
+                        .toString()
                 )
                 challengeDao.insertChallenge(challenge)
 
@@ -129,7 +133,16 @@ class OnboardingViewModel @Inject constructor(
                         dailyRecordId = recordId,
                         habitType = spec.habitType,
                         isCompleted = false,
-                        targetValue = if (spec.habitType == "WATER") state.waterTargetMl.toDouble() else spec.targetValue
+                        targetValue = when (spec.habitType) {
+                            // Only override the mode's water spec when the user actually moved the slider.
+                            "WATER" -> if (state.waterTargetMl != DEFAULT_WATER_TARGET_ML) {
+                                state.waterTargetMl.toDouble()
+                            } else {
+                                spec.targetValue
+                            }
+                            "READING" -> state.readingTargetPages.toDouble()
+                            else -> spec.targetValue
+                        }
                     )
                 }
                 taskEntryDao.insertTaskEntries(taskEntities)
@@ -146,5 +159,9 @@ class OnboardingViewModel @Inject constructor(
                 _uiState.update { it.copy(isCompleting = false, errorMessage = e.localizedMessage) }
             }
         }
+    }
+
+    private companion object {
+        const val DEFAULT_WATER_TARGET_ML = 3800
     }
 }

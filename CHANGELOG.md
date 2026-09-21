@@ -78,4 +78,65 @@ Ascend 75 is a standalone, offline-first discipline and habit tracking platform 
 
 ---
 
+## [Unreleased] — UX overhaul: tab shell, smoothness, wiring
+
+### Added
+
+- **Five-tab information architecture (Today · Trackers · Learn · Vault · More)** on both clients.
+  - `AscendBottomBar` in `:core:designsystem` renders the shell with an alpha backdrop and a hairline
+    separator (no blur/render effect), and stays visible inside Workout/Water/Reading/Settings with the
+    owning tab highlighted.
+  - `MainActivity` is now a `FragmentActivity` hosting all nine destinations, finite tween transitions,
+    `NavigationBar` state save/restore, and `ascend75://task/<id>` deep-link handling.
+- **Trackers hub** (`TrackersHubScreen` / `TrackersHubViewModel`) with cards for both workout sessions,
+  hydration, reading and the progress-photo vault.
+- **`DailyProtocolRepository`** — the single owner of the "today" flow and of day advancement. Replaces
+  two nested `combine{}.collect{…collect{…}}` chains that froze the day number after the first emission
+  and leaked one live Room observer per upstream emission.
+- **Real day advancement**: crossing the sleep cutoff now materialises the next day with the active mode's
+  habit set, carrying custom water/reading targets forward. Strict 75 still waits for explicit consent via
+  the reset dialog.
+- **Honest derived state**: streak counts consecutive completed days instead of echoing the day number;
+  the dashboard's science-card title comes from the seeded curriculum; the sleep-cutoff label reads the
+  persisted preference; milestone days (1/7/14/21/30/45/60/75) raise `MilestoneCelebrationDialog` once.
+- **Session persistence**: `WorkoutSessionDao`, `WaterLogDao`, `ReadingSessionDao` and `ProgressPhotoDao`
+  (schema unchanged, `version` stays 1) with rows written by the workout, hydration, reading and vault
+  flows. Hydration restores its rolling-hour window from Room across process death; reading has a real
+  1 Hz session timer.
+- **Working photo vault**: real CameraX capture (`LifecycleCameraController`), thumbnail decryption at a
+  bounded sample size, `BiometricPrompt` unlock honouring the preference, and a before/after split slider
+  that no longer recomposes the grid on every drag frame.
+- **Functional More tab**: editable sleep-cutoff slider, protocol-mode chips that update the active
+  challenge row, app version, medical disclaimer, a full JSON archive export shared through
+  `FileProvider`, and a wipe that also clears the session tables and destroys the Keystore master key.
+- **Background wiring**: `WorkoutTimerService` declared with `foregroundServiceType="specialUse"` and
+  rebound from the workout screen (the on-screen countdown previously never moved); boot/timezone/nudge
+  receivers and the `FileProvider` registered; `ScheduleEvaluatorWorker` enqueued periodically from
+  `AscendApplication`; `POST_NOTIFICATIONS` requested on API 33+.
+- **50 new science cards** (days 26-75), every citation resolved through Crossref and verified to
+  resolve; five dead DOIs in the original day 1-25 set were replaced.
+- **Web prototype restructured** into the same five tabs, with the Zenith token palette, a self-hosted
+  Plus Jakarta Sans face, a repaired Radix `data-[state=…]`/`data-[orientation=…]` contract, the
+  `tailwindcss-animate` plugin registered, and the light/dark toggle removed.
+
+### Changed
+
+- All nine state collections switched from `collectAsState()` to `collectAsStateWithLifecycle()`
+  (the lifecycle-aware collector was not even on the feature modules' classpath before).
+- `VaultFileStorage` is suspend + `Dispatchers.IO`; `KeystoreManager` builds its `KeyStore` lazily so no
+  hardware keystore work runs on the main thread during Hilt singleton construction.
+- `ScienceCardSeeder` repairs the shipped asset on open instead of only on create.
+- Cold start paints `#0F131C` from `windowBackground` and a branded `AscendLoadingGate`/skeleton instead
+  of a platform-grey window and a full-screen spinner.
+- `AscendProgressRing` implements the multi-segment arc ring the design system specifies.
+- `AscendTheme` no longer takes an unused `darkTheme` parameter (the theme is unconditionally dark).
+
+### Removed
+
+- Five tautological unit tests that asserted their own inputs (`DashboardViewModelTest`,
+  `UserPreferencesTest`, `AccessibilityAuditTest`, `VaultCryptoTest`, `ChallengeDaoTest`) plus
+  `WaterRateLimiterTest`, whose cases are subsumed by the new behavioural suite.
+
+---
+
 [1.0.0]: https://github.com/RohannShetty/Ascend75/releases/tag/v1.0.0-preview

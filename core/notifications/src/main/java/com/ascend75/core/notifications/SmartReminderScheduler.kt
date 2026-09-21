@@ -20,14 +20,7 @@ class SmartReminderScheduler @Inject constructor(
         currentTime: LocalTime,
         quietStartHour: Int = 22,
         quietEndHour: Int = 7
-    ): Boolean {
-        return if (quietStartHour > quietEndHour) {
-            // e.g. 22:00 to 07:00
-            currentTime.hour >= quietStartHour || currentTime.hour < quietEndHour
-        } else {
-            currentTime.hour in quietStartHour until quietEndHour
-        }
-    }
+    ): Boolean = isQuietHour(currentTime.hour, quietStartHour, quietEndHour)
 
     fun scheduleHabitNudge(
         triggerTimestamp: Long,
@@ -84,5 +77,18 @@ class SmartReminderScheduler @Inject constructor(
         const val ACTION_TRIGGER_NUDGE = "com.ascend75.action.TRIGGER_NUDGE"
         const val EXTRA_TASK_ID = "extra_task_id"
         const val EXTRA_HABIT_TITLE = "extra_habit_title"
+
+        /**
+         * Pure quiet-hours predicate, separated from the scheduler so it can be exercised without an
+         * Android [Context] (the scheduler's initialiser resolves an AlarmManager).
+         */
+        @JvmStatic
+        fun isQuietHour(currentHour: Int, quietStartHour: Int = 22, quietEndHour: Int = 7): Boolean =
+            if (quietStartHour > quietEndHour) {
+                // Window wraps midnight, e.g. 22:00 to 07:00
+                currentHour >= quietStartHour || currentHour < quietEndHour
+            } else {
+                currentHour in quietStartHour until quietEndHour
+            }
     }
 }

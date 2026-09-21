@@ -13,7 +13,13 @@ import javax.inject.Singleton
 @Singleton
 class KeystoreManager @Inject constructor() {
 
-    private val keyStore = KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
+    /**
+     * Built lazily so the Hilt singleton is not constructed on the main thread: `generateKey` on
+     * first use is a slow hardware-backed operation.
+     */
+    private val keyStore: KeyStore by lazy {
+        KeyStore.getInstance(ANDROID_KEYSTORE).apply { load(null) }
+    }
 
     private fun getOrCreateSecretKey(): SecretKey {
         if (!keyStore.containsAlias(KEY_ALIAS)) {
@@ -50,6 +56,13 @@ class KeystoreManager @Inject constructor() {
         val spec = GCMParameterSpec(128, iv)
         cipher.init(Cipher.DECRYPT_MODE, getOrCreateSecretKey(), spec)
         return cipher.doFinal(ciphertext)
+    }
+
+    /** Removes the vault master key so a wipe also destroys the ability to decrypt old ciphertext. */
+    fun deleteMasterKey() {
+        if (keyStore.containsAlias(KEY_ALIAS)) {
+            keyStore.deleteEntry(KEY_ALIAS)
+        }
     }
 
     companion object {

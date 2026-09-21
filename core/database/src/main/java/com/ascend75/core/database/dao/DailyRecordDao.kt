@@ -29,6 +29,9 @@ interface DailyRecordDao {
     @Query("SELECT * FROM daily_records WHERE challenge_instance_id = :challengeId ORDER BY day_number ASC")
     fun observeDailyRecordsForChallenge(challengeId: String): Flow<List<DailyRecordEntity>>
 
+    @Query("SELECT * FROM daily_records WHERE challenge_instance_id = :challengeId ORDER BY day_number ASC")
+    suspend fun getDailyRecordsForChallenge(challengeId: String): List<DailyRecordEntity>
+
     @Query("SELECT MAX(day_number) FROM daily_records WHERE challenge_instance_id = :challengeId")
     suspend fun getLatestDayNumber(challengeId: String): Int?
 

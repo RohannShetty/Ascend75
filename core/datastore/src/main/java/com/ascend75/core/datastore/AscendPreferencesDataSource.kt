@@ -20,6 +20,7 @@ val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "as
 class AscendPreferencesDataSource @Inject constructor(
     @ApplicationContext private val context: Context
 ) {
+
     private object PreferencesKeys {
         val ONBOARDING_COMPLETED = booleanPreferencesKey("onboarding_completed")
         val ACTIVE_CHALLENGE_ID = stringPreferencesKey("active_challenge_id")
@@ -31,6 +32,7 @@ class AscendPreferencesDataSource @Inject constructor(
         val BIOMETRIC_ENABLED = booleanPreferencesKey("biometric_enabled")
         val QUIET_START_HOUR = intPreferencesKey("quiet_start_hour")
         val QUIET_END_HOUR = intPreferencesKey("quiet_end_hour")
+        val LAST_CELEBRATED_DAY = intPreferencesKey("last_celebrated_day")
     }
 
     val userPreferencesFlow: Flow<UserPreferences> = context.dataStore.data.map { prefs ->
@@ -44,7 +46,8 @@ class AscendPreferencesDataSource @Inject constructor(
             selectedMode = prefs[PreferencesKeys.SELECTED_MODE] ?: "STRICT_75",
             isBiometricEnabled = prefs[PreferencesKeys.BIOMETRIC_ENABLED] ?: false,
             quietHoursStartHour = prefs[PreferencesKeys.QUIET_START_HOUR] ?: 22,
-            quietHoursEndHour = prefs[PreferencesKeys.QUIET_END_HOUR] ?: 7
+            quietHoursEndHour = prefs[PreferencesKeys.QUIET_END_HOUR] ?: 7,
+            lastCelebratedDay = prefs[PreferencesKeys.LAST_CELEBRATED_DAY] ?: 0
         )
     }
 
@@ -75,6 +78,10 @@ class AscendPreferencesDataSource @Inject constructor(
 
     suspend fun setBiometricEnabled(enabled: Boolean) {
         context.dataStore.edit { it[PreferencesKeys.BIOMETRIC_ENABLED] = enabled }
+    }
+
+    suspend fun setLastCelebratedDay(day: Int) {
+        context.dataStore.edit { it[PreferencesKeys.LAST_CELEBRATED_DAY] = day }
     }
 
     suspend fun clearAllPreferences() {

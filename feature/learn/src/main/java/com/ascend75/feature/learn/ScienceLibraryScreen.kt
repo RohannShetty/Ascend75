@@ -1,5 +1,6 @@
 package com.ascend75.feature.learn
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -16,37 +17,64 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ascend75.core.designsystem.components.AscendLoadingGate
 import com.ascend75.core.designsystem.components.GlassCard
 import com.ascend75.core.designsystem.theme.AscendPalette
 import com.ascend75.core.designsystem.theme.AscendTypography
 
+private val StudyCategories = listOf("ALL", "CIRCADIAN", "FOCUS", "DOPAMINE", "RECOVERY", "HABITS")
+
 @Composable
 fun ScienceLibraryScreen(
     viewModel: ScienceLibraryViewModel,
-    onCardClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+    val selectedCard = state.selectedCard
 
-    val categories = listOf("ALL", "CIRCADIAN", "FOCUS", "DOPAMINE", "RECOVERY", "HABITS")
+    BackHandler(enabled = selectedCard != null) {
+        viewModel.selectCard(null)
+    }
+
+    if (selectedCard != null) {
+        ScienceCardDetailScreen(
+            card = selectedCard,
+            onBack = { viewModel.selectCard(null) },
+            onToggleBookmark = { viewModel.toggleBookmark(selectedCard) },
+            modifier = modifier
+        )
+        return
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = AscendPalette.Background
     ) { padding ->
+        if (state.isLoading) {
+            AscendLoadingGate(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            )
+            return@Scaffold
+        }
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -105,7 +133,7 @@ fun ScienceLibraryScreen(
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 modifier = Modifier.fillMaxWidth()
             ) {
-                items(categories) { cat ->
+                items(StudyCategories, key = { it }) { cat ->
                     val isSelected = state.selectedCategory.equals(cat, ignoreCase = true)
                     Box(
                         modifier = Modifier
@@ -130,10 +158,7 @@ fun ScienceLibraryScreen(
             ) {
                 items(state.filteredCards, key = { it.dayNumber }) { card ->
                     GlassCard(
-                        onClick = {
-                            viewModel.selectCard(card)
-                            onCardClick()
-                        }
+                        onClick = { viewModel.selectCard(card) }
                     ) {
                         Column {
                             Row(
@@ -146,8 +171,20 @@ fun ScienceLibraryScreen(
                                     style = AscendTypography.labelSmall,
                                     color = AscendPalette.Primary
                                 )
-                                if (card.isBookmarked) {
-                                    Text(text = "★", color = AscendPalette.Primary)
+                                IconButton(onClick = { viewModel.toggleBookmark(card) }) {
+                                    Icon(
+                                        imageVector = if (card.isBookmarked) {
+                                            Icons.Filled.Bookmark
+                                        } else {
+                                            Icons.Outlined.BookmarkBorder
+                                        },
+                                        contentDescription = if (card.isBookmarked) {
+                                            "Remove bookmark"
+                                        } else {
+                                            "Bookmark day ${card.dayNumber}"
+                                        },
+                                        tint = if (card.isBookmarked) AscendPalette.Primary else AscendPalette.OnSurfaceVariant
+                                    )
                                 }
                             }
                             Spacer(modifier = Modifier.height(4.dp))

@@ -6,8 +6,12 @@ import com.ascend75.core.database.AscendDatabase
 import com.ascend75.core.database.ScienceCardSeeder
 import com.ascend75.core.database.dao.ChallengeDao
 import com.ascend75.core.database.dao.DailyRecordDao
+import com.ascend75.core.database.dao.ProgressPhotoDao
+import com.ascend75.core.database.dao.ReadingSessionDao
 import com.ascend75.core.database.dao.ScienceCardDao
 import com.ascend75.core.database.dao.TaskEntryDao
+import com.ascend75.core.database.dao.WaterLogDao
+import com.ascend75.core.database.dao.WorkoutSessionDao
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -47,4 +51,16 @@ object DatabaseModule {
 
     @Provides
     fun provideScienceCardDao(db: AscendDatabase): ScienceCardDao = db.scienceCardDao()
+
+    @Provides
+    fun provideWorkoutSessionDao(db: AscendDatabase): WorkoutSessionDao = db.workoutSessionDao()
+
+    @Provides
+    fun provideWaterLogDao(db: AscendDatabase): WaterLogDao = db.waterLogDao()
+
+    @Provides
+    fun provideReadingSessionDao(db: AscendDatabase): ReadingSessionDao = db.readingSessionDao()
+
+    @Provides
+    fun provideProgressPhotoDao(db: AscendDatabase): ProgressPhotoDao = db.progressPhotoDao()
 }

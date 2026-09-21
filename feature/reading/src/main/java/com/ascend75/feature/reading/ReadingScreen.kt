@@ -17,17 +17,20 @@ import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ascend75.core.designsystem.components.AscendButton
 import com.ascend75.core.designsystem.components.AscendButtonVariant
 import com.ascend75.core.designsystem.components.GlassCard
 import com.ascend75.core.designsystem.theme.AscendPalette
 import com.ascend75.core.designsystem.theme.AscendTypography
+import java.util.Locale
 
 @Composable
 fun ReadingScreen(
@@ -36,7 +39,11 @@ fun ReadingScreen(
     onFinished: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(taskId) {
+        viewModel.startTimer()
+    }
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -61,6 +68,16 @@ fun ReadingScreen(
                     text = "10 Pages Non-Fiction",
                     style = AscendTypography.headlineMedium,
                     color = AscendPalette.OnSurface
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                Text(
+                    text = remember(state.readingDurationSeconds) {
+                        val minutes = state.readingDurationSeconds / 60
+                        val seconds = state.readingDurationSeconds % 60
+                        String.format(Locale.US, "Elapsed %02d:%02d%s", minutes, seconds, if (state.isTimerRunning) " • reading" else "")
+                    },
+                    style = AscendTypography.bodySmall,
+                    color = if (state.isTimerRunning) AscendPalette.Success else AscendPalette.OnSurfaceVariant
                 )
             }
 

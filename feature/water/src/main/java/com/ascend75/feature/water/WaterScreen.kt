@@ -19,12 +19,13 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.ascend75.core.designsystem.components.AscendButton
 import com.ascend75.core.designsystem.components.AscendButtonVariant
 import com.ascend75.core.designsystem.components.GlassCard
@@ -36,9 +37,14 @@ import com.ascend75.core.designsystem.theme.AscendTypography
 fun WaterScreen(
     taskId: String,
     viewModel: WaterViewModel,
+    onFinished: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(taskId) {
+        viewModel.initializeFrom(taskId)
+    }
 
     val fraction = (state.currentTotalMl.toFloat() / state.targetMl.toFloat()).coerceIn(0f, 1f)
     val animatedFill by animateFloatAsState(
@@ -134,6 +140,15 @@ fun WaterScreen(
                 }
             }
 
+            if (state.isCompleted) {
+                AscendButton(
+                    text = "Hydration Complete — Done",
+                    variant = AscendButtonVariant.Primary,
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = onFinished
+                )
+            }
+
             // Hourly Pacing Advisory Card
             GlassCard(containerColor = AscendPalette.SurfaceContainerHigh.copy(alpha = 0.4f)) {
                 Column {
@@ -183,7 +198,7 @@ fun WaterScreen(
                     AscendButton(
                         text = "Log Anyway",
                         variant = AscendButtonVariant.Outline,
-                        onClick = { viewModel.logWater(250, taskId, forceLog = true) }
+                        onClick = { viewModel.confirmPendingLog(taskId) }
                     )
                 }
             )

@@ -10,44 +10,50 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.ascend75.core.database.entities.TaskEntryEntity
 import com.ascend75.core.designsystem.components.AscendProgressRing
 import com.ascend75.core.designsystem.components.GlassCard
 import com.ascend75.core.designsystem.components.HabitCheckCard
 import com.ascend75.core.designsystem.theme.AscendPalette
+import com.ascend75.core.designsystem.theme.AscendShapesTokens
 import com.ascend75.core.designsystem.theme.AscendTypography
 import com.ascend75.feature.dashboard.components.DayResetDialog
+import com.ascend75.feature.dashboard.components.MilestoneCelebrationDialog
 import com.ascend75.feature.dashboard.components.TaskDetailBottomSheet
+import java.util.Locale
 
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel,
+    onOpenTracker: (TaskEntryEntity) -> Unit,
     onNavigateToScienceLibrary: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val state by viewModel.uiState.collectAsState()
+    val state by viewModel.uiState.collectAsStateWithLifecycle()
 
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = AscendPalette.Background
     ) { padding ->
         if (state.isLoading) {
-            Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                CircularProgressIndicator(color = AscendPalette.Primary)
-            }
+            DashboardSkeleton(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(padding)
+            )
         } else {
             LazyColumn(
                 modifier = Modifier
@@ -71,7 +77,9 @@ fun DashboardScreen(
                                 color = AscendPalette.OnSurface
                             )
                             Text(
-                                text = "${state.mode.title} • Sleep Cutoff 3:00 AM",
+                                text = remember(state.mode, state.sleepCutoffHour, state.sleepCutoffMinute) {
+                                    "${state.mode.title} • Sleep Cutoff ${formatSleepCutoff(state.sleepCutoffHour, state.sleepCutoffMinute)}"
+                                },
                                 style = AscendTypography.bodySmall,
                                 color = AscendPalette.OnSurfaceVariant
                             )
@@ -88,6 +96,21 @@ fun DashboardScreen(
                                 text = "⚡ ${state.streakDays}d Streak",
                                 style = AscendTypography.labelMedium,
                                 color = AscendPalette.Primary
+                            )
+                        }
+                    }
+                }
+
+                state.errorMessage?.let { message ->
+                    item {
+                        GlassCard(
+                            containerColor = AscendPalette.ErrorContainer.copy(alpha = 0.2f),
+                            borderColor = AscendPalette.Error.copy(alpha = 0.4f)
+                        ) {
+                            Text(
+                                text = message,
+                                style = AscendTypography.bodyMedium,
+                                color = AscendPalette.Error
                             )
                         }
                     }
@@ -153,20 +176,14 @@ fun DashboardScreen(
                 }
 
                 items(state.tasks, key = { it.id }) { task ->
-                    val (title, category, subtitle) = when (task.habitType) {
-                        "WORKOUT_1" -> Triple("Outdoor Workout (45m)", "Physical Discipline", "Mandatory outdoor session")
-                        "WORKOUT_2" -> Triple("Second Workout (45m)", "Physical Discipline", "Separated by 3+ hours")
-                        "WATER" -> Triple("Hydration (${task.targetValue.toInt()} ml)", "Physiological Fuel", "${task.currentValue.toInt()} ml logged")
-                        "READING" -> Triple("Read 10 Pages", "Cognitive Growth", "Non-fiction / personal development")
-                        "DIET" -> Triple("Strict Clean Diet", "Nutrition Integrity", "Zero alcohol, zero cheat meals")
-                        "PHOTO" -> Triple("Progress Photo", "Visual Accountability", "Hardware-encrypted vault")
-                        else -> Triple("Custom Habit", "Daily Practice", "Discipline requirement")
+                    val presentation = remember(task.habitType, task.targetValue, task.currentValue) {
+                        habitPresentation(task.habitType, task.targetValue, task.currentValue)
                     }
 
                     HabitCheckCard(
-                        title = title,
-                        category = category,
-                        subtitle = subtitle,
+                        title = presentation.title,
+                        category = presentation.category,
+                        subtitle = presentation.subtitle,
                         isCompleted = task.isCompleted,
                         onToggle = { isChecked ->
                             viewModel.toggleTaskCompletion(task.id, isChecked)
@@ -192,7 +209,16 @@ fun DashboardScreen(
                     },
                     onSaveNotes = { notes ->
                         viewModel.saveTaskNotes(task.id, notes)
-                    }
+                    },
+                    onOpenTracker = if (task.habitType == "DIET") null else { { onOpenTracker(task) } }
+                )
+            }
+
+            // Milestone Celebration
+            if (state.showMilestoneDialog) {
+                MilestoneCelebrationDialog(
+                    dayNumber = state.dayNumber,
+                    onDismiss = { viewModel.dismissMilestone() }
                 )
             }
 
@@ -209,4 +235,66 @@ fun DashboardScreen(
             }
         }
     }
+}
+
+/**
+ * First-paint placeholder matching the dashboard's header / ring / list heights so the real frame
+ * does not shift the layout when it arrives.
+ */
+@Composable
+private fun DashboardSkeleton(modifier: Modifier = Modifier) {
+    Column(
+        modifier = modifier.padding(horizontal = 20.dp).padding(top = 12.dp),
+        verticalArrangement = Arrangement.spacedBy(14.dp)
+    ) {
+        SkeletonBar(height = 64.dp)
+        SkeletonBar(height = 224.dp)
+        SkeletonBar(height = 72.dp)
+        SkeletonBar(height = 96.dp)
+        SkeletonBar(height = 96.dp)
+    }
+}
+
+@Composable
+private fun SkeletonBar(height: androidx.compose.ui.unit.Dp) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(height)
+            .clip(RoundedCornerShape(AscendShapesTokens.ExtraLarge))
+            .background(AscendPalette.SurfaceContainerLow)
+    )
+}
+
+/** Immutable presentation holder so list items do not allocate interpolated strings per recomposition. */
+private data class HabitPresentation(
+    val title: String,
+    val category: String,
+    val subtitle: String
+)
+
+private fun habitPresentation(habitType: String, targetValue: Double, currentValue: Double): HabitPresentation =
+    when (habitType) {
+        "WORKOUT_1" -> HabitPresentation("Outdoor Workout (45m)", "Physical Discipline", "Mandatory outdoor session")
+        "WORKOUT_2" -> HabitPresentation("Second Workout (45m)", "Physical Discipline", "Separated by 3+ hours")
+        "WATER" -> HabitPresentation(
+            "Hydration (${targetValue.toInt()} ml)",
+            "Physiological Fuel",
+            "${currentValue.toInt()} ml logged"
+        )
+        "READING" -> HabitPresentation("Read 10 Pages", "Cognitive Growth", "Non-fiction / personal development")
+        "DIET" -> HabitPresentation("Strict Clean Diet", "Nutrition Integrity", "Zero alcohol, zero cheat meals")
+        "PHOTO" -> HabitPresentation("Progress Photo", "Visual Accountability", "Hardware-encrypted vault")
+        else -> HabitPresentation("Custom Habit", "Daily Practice", "Discipline requirement")
+    }
+
+private fun formatSleepCutoff(hour: Int, minute: Int): String {
+    val normalized = ((hour % 24) + 24) % 24
+    val displayHour = when {
+        normalized == 0 -> 12
+        normalized > 12 -> normalized - 12
+        else -> normalized
+    }
+    val suffix = if (normalized < 12) "AM" else "PM"
+    return String.format(Locale.US, "%d:%02d %s", displayHour, minute, suffix)
 }

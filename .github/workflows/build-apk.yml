@@ -51,14 +51,18 @@ jobs:
             This release contains the latest debug APK compiled directly from the `master`/`main` branch.
             
             ### Included in this build:
-            - **4 Challenge Modes**: Strict 75, Flexible 75, 75 Soft, and Custom.
-            - **Intelligent Sleep Cutoff**: Configurable sleep boundary (default 3:00 AM) eliminating artificial midnight failures.
-            - **Empathetic Reset & Reflection**: In Strict 75, incomplete days capture qualitative lessons and preserve all historical data.
-            - **Dual 45-Minute Workout Timer**: Foreground chronometer service with indoor/outdoor tagging and rest separation warnings.
-            - **Hydration Tracker**: Paced water logging with hyponatremia rate-limiting safety alerts (>1.2L/hr).
-            - **Encrypted Photo Vault**: Hardware-backed AES-256-GCM encryption with Biometric/PIN gate and Before/After split slider.
-            - **75-Day Behavioral Science Curriculum**: Pre-seeded evidence cards with DOI/PubMed primary citations.
-            - **Sovereign Data Controls**: Offline-first Room persistence and single-tap cryptographic zero-wipe data erasure.
+            - **Five-Tab Shell**: Today · Trackers · Learn · Vault · More, with a fixed bottom bar, back-to-Today behaviour and `ascend75://task/<id>` deep links. Every implemented screen is now reachable.
+            - **Real Day Advancement**: crossing the sleep cutoff materialises the next day with the active mode's habit set and carries custom targets forward; Strict 75 still requires explicit consent.
+            - **4 Challenge Modes**: Strict 75, Flexible 75, 75 Soft, and Custom, switchable from the More tab.
+            - **Intelligent Sleep Cutoff**: user-configurable day boundary (default 3:00 AM), persisted and reflected on the dashboard.
+            - **Dual 45-Minute Workout Timer**: foreground chronometer service, live on-screen countdown, indoor/outdoor tagging, and the 3-hour rest-separation advisory. Sessions are persisted.
+            - **Hydration Tracker**: paced water logging with the hyponatremia rate limit (>1.2 L/hr) and a rolling window that survives process death.
+            - **Reading Tracker**: 1 Hz session timer, 10-page gate, and persisted reading sessions.
+            - **Encrypted Photo Vault**: in-app CameraX capture, hardware AES-256-GCM at rest, biometric/PIN gate, before/after split comparison, real decrypted thumbnails.
+            - **75-Day Behavioural Science Curriculum**: 75 unique cards, every citation resolved through Crossref, with bookmarking and in-place detail.
+            - **Sovereign Data Controls**: full JSON archive export through `FileProvider`, plus a wipe that zero-fills the vault, truncates every table and destroys the Keystore master key.
+            - **Smoothness Pass**: single-owner day flow, lifecycle-aware state collection, tightened recomposition scope, and a branded `#0F131C` cold start instead of a platform-grey window.
+            - **Web Prototype** (`web/`): the same five tabs and design tokens as a React + Vite reference build.
             
             ### Installation:
             Download and install `app-debug.apk` on Android 8.0+ (API 26+) devices.

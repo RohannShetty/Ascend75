@@ -16,15 +16,21 @@ class ScienceCardSeeder(
     private val scienceCardDaoProvider: Provider<ScienceCardDao>
 ) : RoomDatabase.Callback() {
 
-    override fun onCreate(db: SupportSQLiteDatabase) {
-        super.onCreate(db)
+    /**
+     * Runs on every open rather than only on create, so a database that was seeded before the full
+     * 75-card asset shipped is repaired on upgrade instead of staying permanently short.
+     */
+    override fun onOpen(db: SupportSQLiteDatabase) {
+        super.onOpen(db)
         CoroutineScope(Dispatchers.IO).launch {
-            seedCards()
+            if (scienceCardDaoProvider.get().getCardCount() < CARD_COUNT) {
+                seedCards()
+            }
         }
     }
 
     suspend fun seedCards() {
-        try {
+        runCatching {
             val jsonString = context.assets.open("science_cards.json")
                 .bufferedReader()
                 .use { it.readText() }
@@ -43,15 +49,19 @@ class ScienceCardSeeder(
                         mechanism = obj.getString("mechanism"),
                         actionItem = obj.getString("actionItem"),
                         sourceCitation = obj.getString("sourceCitation"),
-                        doiOrUrl = obj.optString("doiOrUrl", null),
+                        doiOrUrl = if (obj.isNull("doiOrUrl")) null else obj.getString("doiOrUrl"),
                         isBookmarked = false
                     )
                 )
             }
 
             scienceCardDaoProvider.get().insertAll(cards)
-        } catch (e: Exception) {
-            e.printStackTrace()
+        }.onFailure { error ->
+            error.printStackTrace()
         }
+    }
+
+    companion object {
+        const val CARD_COUNT = 75
     }
 }

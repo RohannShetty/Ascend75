@@ -34,7 +34,8 @@ fun TaskDetailBottomSheet(
     task: TaskEntryEntity,
     onDismiss: () -> Unit,
     onToggleCompletion: (Boolean) -> Unit,
-    onSaveNotes: (String) -> Unit
+    onSaveNotes: (String) -> Unit,
+    onOpenTracker: (() -> Unit)? = null
 ) {
     val sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     var notesText by remember { mutableStateOf(task.notes ?: "") }
@@ -47,6 +48,14 @@ fun TaskDetailBottomSheet(
         "DIET" -> Pair("Strict Clean Diet", "Sustained insulin stability, reduced systemic inflammation, and complete alcohol elimination.")
         "PHOTO" -> Pair("Progress Photo", "Visual accountability, private hardware-encrypted tracking, and objective body composition monitoring.")
         else -> Pair("Custom Discipline Habit", "Consistent intentional behavior repeated daily.")
+    }
+
+    val trackerLabel = when (task.habitType) {
+        "WORKOUT_1", "WORKOUT_2" -> "Start Workout"
+        "WATER" -> "Log Water"
+        "READING" -> "Log Reading"
+        "PHOTO" -> "Capture Photo"
+        else -> null
     }
 
     ModalBottomSheet(
@@ -118,6 +127,20 @@ fun TaskDetailBottomSheet(
                 minLines = 2,
                 maxLines = 4
             )
+
+            val trackerAction = onOpenTracker
+            if (trackerAction != null && trackerLabel != null) {
+                Spacer(modifier = Modifier.height(20.dp))
+                AscendButton(
+                    text = trackerLabel,
+                    variant = AscendButtonVariant.Primary,
+                    modifier = Modifier.fillMaxWidth(),
+                    onClick = {
+                        onDismiss()
+                        trackerAction()
+                    }
+                )
+            }
 
             Spacer(modifier = Modifier.height(20.dp))
 

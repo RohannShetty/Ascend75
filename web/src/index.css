@@ -1,0 +1,77 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+/* Self-hosted brand face — no CDN, so the prototype stays offline-capable. */
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 400 600;
+  font-display: swap;
+  src: url("/fonts/plus-jakarta-sans-latin.woff2") format("woff2");
+}
+
+/* Ascend 75 "Zenith Fitness & Growth" tokens. Single obsidian theme: `:root` and `.dark` carry the
+   same palette so every `dark:` variant in the vendored components resolves to the brand values. */
+:root,
+.dark {
+  --background: #0f131c;
+  --foreground: #dfe2ef;
+  --card: #181b25;
+  --card-foreground: #dfe2ef;
+  --popover: #181b25;
+  --popover-foreground: #dfe2ef;
+  --primary: #d4af37;
+  --primary-foreground: #3c2f00;
+  --secondary: #7bd0ff;
+  --secondary-foreground: #00354a;
+  --muted: #1c1f29;
+  --muted-foreground: #d0c5af;
+  --accent: #262a34;
+  --accent-foreground: #dfe2ef;
+  --destructive: #ffb4ab;
+  --destructive-foreground: #690005;
+  --border: #31353f;
+  --input: #4d4635;
+  --ring: #f2ca50;
+  --radius: 1rem;
+}
+
+@theme inline {
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground antialiased min-h-screen;
+    font-family: var(--font-sans);
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}

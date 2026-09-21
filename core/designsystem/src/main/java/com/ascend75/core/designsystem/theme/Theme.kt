@@ -1,6 +1,5 @@
 package com.ascend75.core.designsystem.theme
 
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
@@ -47,10 +46,7 @@ private val DarkColorScheme = darkColorScheme(
 )
 
 @Composable
-fun AscendTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable () -> Unit
-) {
+fun AscendTheme(content: @Composable () -> Unit) {
     // Ascend 75 enforces the executive dark theme palette ("Zenith Fitness & Growth") by default
     MaterialTheme(
         colorScheme = DarkColorScheme,

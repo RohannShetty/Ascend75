@@ -2,33 +2,43 @@ package com.ascend75.feature.reading
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.ascend75.core.database.dao.ReadingSessionDao
 import com.ascend75.core.database.dao.TaskEntryDao
+import com.ascend75.core.database.entities.ReadingSessionEntity
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
+import java.util.UUID
 import javax.inject.Inject
 
 data class ReadingUiState(
     val bookTitle: String = "",
     val startPage: Int = 1,
-    val endPage: Int = 11,
-    val pagesRead: Int = 10,
-    val readingDurationMinutes: Int = 20,
+    val endPage: Int = 1,
+    val pagesRead: Int = 0,
+    val readingDurationSeconds: Int = 0,
     val keyTakeaway: String = "",
     val isCompleted: Boolean = false,
+    val isTimerRunning: Boolean = false,
     val errorMessage: String? = null
 )
 
 @HiltViewModel
 class ReadingViewModel @Inject constructor(
-    private val taskEntryDao: TaskEntryDao
+    private val taskEntryDao: TaskEntryDao,
+    private val readingSessionDao: ReadingSessionDao
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReadingUiState())
     val uiState: StateFlow<ReadingUiState> = _uiState.asStateFlow()
+
+    private var timerJob: Job? = null
 
     fun setBookTitle(title: String) {
         _uiState.update { it.copy(bookTitle = title) }
@@ -50,6 +60,23 @@ class ReadingViewModel @Inject constructor(
         _uiState.update { it.copy(keyTakeaway = takeaway) }
     }
 
+    fun startTimer() {
+        if (timerJob?.isActive == true) return
+        _uiState.update { it.copy(isTimerRunning = true) }
+        timerJob = viewModelScope.launch {
+            while (isActive) {
+                delay(1000L)
+                _uiState.update { it.copy(readingDurationSeconds = it.readingDurationSeconds + 1) }
+            }
+        }
+    }
+
+    fun stopTimer() {
+        timerJob?.cancel()
+        timerJob = null
+        _uiState.update { it.copy(isTimerRunning = false) }
+    }
+
     fun saveSession(taskId: String, onFinished: () -> Unit) {
         val state = _uiState.value
         if (state.pagesRead < 10) {
@@ -57,6 +84,8 @@ class ReadingViewModel @Inject constructor(
             return
         }
 
+        stopTimer()
+        val durationSeconds = _uiState.value.readingDurationSeconds
         viewModelScope.launch {
             val now = System.currentTimeMillis()
             taskEntryDao.updateTaskCurrentValue(taskId, state.pagesRead.toDouble())
@@ -68,7 +97,26 @@ class ReadingViewModel @Inject constructor(
                 taskEntryDao.updateTaskEntry(existing.copy(notes = notes))
             }
 
+            readingSessionDao.insert(
+                ReadingSessionEntity(
+                    id = UUID.randomUUID().toString(),
+                    taskEntryId = taskId,
+                    bookTitle = state.bookTitle.ifBlank { "Untitled" },
+                    startPage = state.startPage,
+                    endPage = state.endPage,
+                    pagesRead = state.pagesRead,
+                    readingDurationSeconds = durationSeconds,
+                    keyTakeaway = state.keyTakeaway.ifBlank { null },
+                    loggedAt = now
+                )
+            )
+
             onFinished()
         }
+    }
+
+    override fun onCleared() {
+        timerJob?.cancel()
+        super.onCleared()
     }
 }

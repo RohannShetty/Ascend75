@@ -31,6 +31,11 @@ interface TaskEntryDao {
     @Query("UPDATE task_entries SET current_value = :currentValue WHERE id = :id")
     suspend fun updateTaskCurrentValue(id: String, currentValue: Double)
 
+    @Query(
+        "SELECT * FROM task_entries WHERE daily_record_id = (SELECT daily_record_id FROM task_entries WHERE id = :taskId) AND habit_type LIKE 'WORKOUT%'"
+    )
+    suspend fun getWorkoutTasksForSameDay(taskId: String): List<TaskEntryEntity>
+
     @Query("DELETE FROM task_entries")
     suspend fun clearAllTasks()
 }
