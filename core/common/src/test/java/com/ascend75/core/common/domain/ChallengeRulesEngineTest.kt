@@ -1,5 +1,6 @@
 package com.ascend75.core.common.domain
 
+import com.ascend75.core.domain.model.ChallengeMode
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
 import org.junit.Test
@@ -80,5 +81,13 @@ class ChallengeRulesEngineTest {
         val morningAfterCutoff = today.plusDays(1).atTime(3, 30).atZone(zoneId).toInstant().toEpochMilli()
         val isPastCutoffLate = DayBoundaryEvaluator.isPastSleepCutoff(morningAfterCutoff, cutoffTimestamp)
         assertEquals(true, isPastCutoffLate)
+    }
+
+    @Test
+    fun strictAndSoftModesNeverExposeADuplicateHabitType() {
+        listOf(ChallengeMode.STRICT_75, ChallengeMode.FLEXIBLE_75, ChallengeMode.SOFT_75).forEach { mode ->
+            val types = ChallengeRulesEngine.getTasksForMode(mode).map { it.habitType }
+            assertEquals("duplicate habit in $mode", types.size, types.distinct().size)
+        }
     }
 }

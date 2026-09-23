@@ -23,6 +23,8 @@ rootProject.name = "Ascend75"
 include(":app")
 
 // Core Modules
+include(":core:domain")
+include(":core:data")
 include(":core:common")
 include(":core:designsystem")
 include(":core:database")

@@ -1,4 +1,4 @@
-package com.ascend75.core.common.domain
+package com.ascend75.core.domain.model
 
 enum class ChallengeMode(val title: String, val description: String) {
     STRICT_75(
