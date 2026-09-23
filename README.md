@@ -63,11 +63,13 @@ Built strictly adhering to modern Android Jetpack guidelines, Clean Architecture
 
 ```
 Ascend75/
-├── app/                               # Root application, Hilt setup, navigation shell
+├── app/                               # Root application, Hilt setup, type-safe navigation shell
 ├── core/
-│   ├── common/                        # ChallengeRulesEngine, DayBoundaryEvaluator, ChallengeMode
+│   ├── domain/                        # JVM-only: domain models, HabitType, repository contracts
+│   ├── data/                          # Room-backed repositories, entity↔model mappers, Hilt bindings
+│   ├── common/                        # ChallengeRulesEngine, DayBoundaryEvaluator
 │   ├── designsystem/                  # Material 3 theme, typography, shapes, Stitch tokens, bottom bar
-│   ├── database/                      # Room database, entities, DAOs, ScienceCardSeeder
+│   ├── database/                      # Room database, entities, DAOs, ScienceCardSeeder (schema exported)
 │   ├── datastore/                     # Jetpack Preferences DataStore for local state & cutoff schedules
 │   ├── crypto/                        # Android Keystore manager, VaultFileStorage, BiometricAuthHelper
 │   └── notifications/                 # Channels, WorkManager worker, AlarmManager scheduler, receivers
@@ -81,6 +83,23 @@ Ascend75/
     ├── learn/                         # 75-day science library, card detail, DOI links, bookmarks
     └── settings/                      # Export, sleep cutoff, protocol mode, cryptographic zero-wipe
 ```
+
+### Persistence Boundary (single owner)
+
+`Room` and `DataStore` are an implementation detail of **`:core:data`**. No `:feature:*` module declares
+a dependency on `:core:database` or `:core:datastore`, and no ViewModel injects a DAO: UI state is built
+from `:core:domain` models (`HabitType`, `TaskEntry`, `DailyRecord`, `TodayProtocol`) obtained from
+repository contracts.
+
+```
+feature:*  ──▶  :core:domain  ◀──  :core:data  ──▶  :core:database / :core:datastore
+   (UI)          (contracts)        (the only      (Room + DataStore)
+                                  implementation)
+```
+
+This is enforced in CI, not by convention: the pipeline fails if a feature's `src/main` mentions
+`com.ascend75.core.database` or `com.ascend75.core.datastore`. See
+[`docs/architecture-persistence.md`](docs/architecture-persistence.md) for the rules and the rationale.
 
 ### Navigation & Information Architecture
 
@@ -97,6 +116,12 @@ Both clients expose the same five destinations, rendered by a fixed bottom bar
 
 Pressing system back from a non-Today tab returns to Today before exiting. Deep links of the form
 `ascend75://task/<taskId>` (used by the notification actions) resolve the task and open its tracker.
+
+Navigation is **type-safe**: every destination is a `@Serializable` key declared in
+`app/src/main/java/com/ascend75/app/navigation/Routes.kt`, registered in `AscendNavGraph.kt` with
+`composable<DashboardRoute> { … }` and reached with `navController.navigate(WaterRoute(taskId))`.
+There are no route strings left to mistype, and `MainActivity` is a 158-line shell that only picks the
+start destination, drains the deep link and asks for `POST_NOTIFICATIONS`.
 
 ### Web Prototype (`web/`)
 
@@ -158,19 +183,30 @@ app/build/outputs/apk/debug/app-debug.apk
 ./gradlew test
 ```
 The suite runs on the JVM (Robolectric where a real `Context` or in-memory Room database is needed) and covers
-the rules engine, day-boundary evaluation, `DailyProtocolRepository` day advancement and streak derivation,
+the rules engine, day-boundary evaluation, the `:core:data` repositories' day advancement and streak derivation,
 hydration rate limiting and restore, the reading 10-page gate and session timer, vault file framing,
-photo-vault capture and vault gating, quiet-hours suppression, the science-card asset, and an onboarding → day-2
-journey over the real schema.
+photo-vault capture and vault gating, quiet-hours suppression, the science-card asset, the wipe/export
+integration over a real schema, and an onboarding → day-2 journey driven entirely through repositories.
+
+**47 unit tests, 0 failures** at the time of writing (`docs/refactor-baseline.md` records the pre-refactor
+baseline of 41 so the comparison is auditable). CI runs the same command on every push and pull request, and
+additionally fails the build when a feature module reaches for Room or DataStore directly:
+
+```bash
+# the persistence boundary check that CI enforces
+grep -rn "com\.ascend75\.core\.database\|com\.ascend75\.core\.datastore" feature/*/src/main --include=*.kt
+# expected output: no matches (exit code 1)
+```
 
 ---
 
 ## 📦 Testing & APK Downloads
 
-Every push to `main` triggers our GitHub Actions CI/CD pipeline, which compiles the application and generates a downloadable debug APK:
+Every push to `main` (and every `v*` tag) triggers our GitHub Actions CI/CD pipeline, which runs the unit
+suite and the persistence-boundary gate, then compiles a downloadable debug APK and attaches it to the release:
 
 1. Navigate to the [Releases](https://github.com/RohannShetty/Ascend75/releases) tab.
-2. Download `app-debug.apk` under the latest **v1.0.0 Preview Build**.
+2. Download `app-debug.apk` under the latest release (**v1.1.0**).
 3. Install the APK on any device running Android 8.0+ (API 26+) or in Android Studio Emulator.
 
 ---

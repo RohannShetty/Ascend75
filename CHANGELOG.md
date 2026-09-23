@@ -7,6 +7,73 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [1.1.0] - 2026-09-23
+
+### Architecture Refactor: Single-Owner Persistence & Type-Safe Navigation
+
+The UI used to talk to Room directly: all eight feature modules declared `:core:database`, ViewModels
+injected DAOs, and Room entities *were* the UI model (`DashboardUiState.tasks` was a
+`List<TaskEntryEntity>`). This release puts one module in charge of persistence and gives the UI its own
+vocabulary.
+
+### Added
+
+- **`:core:domain`** — a JVM-only module (no Android plugin, no `jvmToolchain`) holding the domain models
+  (`HabitType`, `TaskEntry`, `DailyRecord`, `TodayProtocol`, `ChallengeInstance`, `ScienceCard`,
+  `WaterLog`, `ReadingSession`, `WorkoutSession`, `ProgressPhoto`, `UserPreferences`) and the repository
+  contracts every consumer programs against. It is testable on a bare JVM in milliseconds.
+- **`:core:data`** — the only module that knows how the data is stored: Room-backed repository
+  implementations (`DefaultTodayProtocolRepository`, `DefaultChallengeRepository`, `DefaultTaskRepository`,
+  `DefaultDailyRecordRepository`, `DefaultVaultRepository`, `DefaultWaterRepository`,
+  `DefaultReadingRepository`, `DefaultWorkoutRepository`, `DefaultScienceRepository`,
+  `DefaultSettingsRepository`), entity↔model mappers, and a Hilt `@Binds` module.
+- **Type-safe navigation** — `app/.../navigation/Routes.kt` declares each destination as a
+  `@Serializable` key and `AscendNavGraph.kt` registers it with `composable<Route> { … }`. Route strings
+  and the `Screen` sealed class are gone.
+- **Room schema export** — `ksp { arg("room.schemaLocation", …) }` plus committed snapshots under
+  `core/database/schemas/`, so a future migration can be written against a known schema.
+- **Test baseline record** (`docs/refactor-baseline.md`) and **`docs/architecture-persistence.md`**,
+  which states the boundary rules and how CI enforces them.
+- New tests: `HabitTypeTest`, `MappersTest`, `DefaultTodayProtocolRepositoryTest` (moved out of the
+  feature module), and `ChallengeRulesEngineTest.strictAndSoftModesNeverExposeADuplicateHabitType`.
+
+### Changed
+
+- **Every `:feature:*` module** dropped `:core:database` and `:core:datastore` and now depends on
+  `:core:domain`. ViewModels inject repositories, not DAOs; UI state carries domain models.
+- **`OnboardingViewModel.completeOnboarding`** starts the challenge through
+  `ChallengeRepository.startAttempt`, which writes the attempt, its day-1 record and day-1 tasks inside a
+  single `withTransaction` — previously three independent DAO writes could leave a half-created attempt.
+- **Strict-reset path** (`DashboardViewModel.archiveAndResetStrictAttempt`) archives the attempt, closes
+  the day and starts the next one through repositories, so the reset is atomic and the UI cannot observe
+  a partially archived attempt.
+- **`DataExportManager`** reads through repositories; the exported JSON keys are unchanged, so existing
+  archives remain readable.
+- **`MainActivity` shrank from 315 to 158 lines** — it picks the start destination, drains
+  `ascend75://task/<id>` and requests `POST_NOTIFICATIONS`; the destination table lives in
+  `AscendNavGraph.kt`.
+- **`:core:common` and `:core:datastore`** expose `:core:domain` via `api(project(":core:domain"))`, so a
+  consumer of the rules engine sees the same model types as the repositories.
+- **CI now runs `./gradlew test`** on every push and pull request and fails the build if a feature's
+  `src/main` imports `com.ascend75.core.database` or `com.ascend75.core.datastore`.
+- `.gitignore` also ignores `.codegraph/`, `graphify-out/` and `transcripts/`; the generated graph output
+  is no longer tracked.
+
+### Removed
+
+- `feature/dashboard/.../data/DailyProtocolRepository.kt` and its test — superseded by
+  `:core:data`'s `DefaultTodayProtocolRepository` (the contract now lives in `:core:domain`).
+- `app/.../navigation/Screen.kt` (string routes) and the DAO/DataStore imports across all eight features.
+
+### Notes
+
+- No schema change: `AscendDatabase` stays at version 1, and the destructive-fallback policy in
+  `DatabaseModule` is documented in `core/database/README.md` as a deliberate v1 decision.
+- Still on the roadmap, not in this release: splitting the remaining god composables, Gradle
+  convention plugins for the 14 duplicated build blocks, and instrumented (`androidTest`) coverage.
+
+---
+
 ## [1.0.0] - 2026-09-19
 
 ### Initial Release: Offline-First Sovereign Discipline Platform
@@ -139,4 +206,5 @@ Ascend 75 is a standalone, offline-first discipline and habit tracking platform 
 
 ---
 
+[1.1.0]: https://github.com/RohannShetty/Ascend75/releases/tag/v1.1.0
 [1.0.0]: https://github.com/RohannShetty/Ascend75/releases/tag/v1.0.0-preview

@@ -3,6 +3,7 @@ name: Build Android APK
 on:
   push:
     branches: [ main, master ]
+    tags: [ 'v*' ]
   pull_request:
     branches: [ main, master ]
   workflow_dispatch:
@@ -10,10 +11,53 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
+  verify:
+    name: Unit Tests & Architecture Gates
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+          cache: 'gradle'
+
+      - name: Grant Execute Permission to Gradlew
+        run: chmod +x gradlew
+
+      - name: Persistence Boundary — features must not touch Room or DataStore
+        run: |
+          if grep -rn "com\.ascend75\.core\.database\|com\.ascend75\.core\.datastore" \
+               feature/*/src/main --include=*.kt; then
+            echo "::error::A feature module imports persistence directly. Go through :core:domain repositories."
+            exit 1
+          fi
+          echo "Boundary intact: no feature src/main imports :core:database or :core:datastore."
+
+      - name: Unit Tests
+        run: ./gradlew test --stacktrace
+
+      - name: Upload Test Reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: unit-test-reports
+          path: '**/build/reports/tests/**'
+          if-no-files-found: ignore
+
   build:
     name: Build Debug APK
     runs-on: ubuntu-latest
+    needs: verify
 
     steps:
       - name: Checkout Code
@@ -40,31 +84,36 @@ jobs:
           if-no-files-found: error
 
       - name: Create or Update GitHub Release
-        if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: v1.0.0-preview
-          name: Ascend 75 v1.0.0 Preview Build
+          tag_name: ${{ github.ref_name }}
+          name: Ascend 75 ${{ github.ref_name }}
           body: |
-            ## Ascend 75 — Android Preview Release
-            
-            This release contains the latest debug APK compiled directly from the `master`/`main` branch.
-            
-            ### Included in this build:
-            - **Five-Tab Shell**: Today · Trackers · Learn · Vault · More, with a fixed bottom bar, back-to-Today behaviour and `ascend75://task/<id>` deep links. Every implemented screen is now reachable.
-            - **Real Day Advancement**: crossing the sleep cutoff materialises the next day with the active mode's habit set and carries custom targets forward; Strict 75 still requires explicit consent.
-            - **4 Challenge Modes**: Strict 75, Flexible 75, 75 Soft, and Custom, switchable from the More tab.
-            - **Intelligent Sleep Cutoff**: user-configurable day boundary (default 3:00 AM), persisted and reflected on the dashboard.
-            - **Dual 45-Minute Workout Timer**: foreground chronometer service, live on-screen countdown, indoor/outdoor tagging, and the 3-hour rest-separation advisory. Sessions are persisted.
-            - **Hydration Tracker**: paced water logging with the hyponatremia rate limit (>1.2 L/hr) and a rolling window that survives process death.
-            - **Reading Tracker**: 1 Hz session timer, 10-page gate, and persisted reading sessions.
-            - **Encrypted Photo Vault**: in-app CameraX capture, hardware AES-256-GCM at rest, biometric/PIN gate, before/after split comparison, real decrypted thumbnails.
-            - **75-Day Behavioural Science Curriculum**: 75 unique cards, every citation resolved through Crossref, with bookmarking and in-place detail.
-            - **Sovereign Data Controls**: full JSON archive export through `FileProvider`, plus a wipe that zero-fills the vault, truncates every table and destroys the Keystore master key.
-            - **Smoothness Pass**: single-owner day flow, lifecycle-aware state collection, tightened recomposition scope, and a branded `#0F131C` cold start instead of a platform-grey window.
-            - **Web Prototype** (`web/`): the same five tabs and design tokens as a React + Vite reference build.
-            
-            ### Installation:
+            ## Ascend 75 — Android Release ${{ github.ref_name }}
+
+            Debug APK compiled from tag `${{ github.ref_name }}` by CI, after the unit-test and
+            persistence-boundary gates passed.
+
+            ### In this build
+            - **Single-owner persistence**: `:core:domain` (contracts) + `:core:data` (Room/DataStore).
+              No feature module can reach the database — CI fails the build if one tries.
+            - **Type-safe navigation**: `@Serializable` destination keys, no route strings, `MainActivity`
+              down to 158 lines.
+            - **Atomic day writes**: onboarding, day advancement and the Strict-75 reset each commit
+              inside one Room transaction.
+            - **Five-Tab Shell**: Today · Trackers · Learn · Vault · More, with `ascend75://task/<id>`
+              deep links.
+            - **4 Challenge Modes** with the configurable sleep cutoff (default 3:00 AM).
+            - **Dual 45-Minute Workout Timer**, hydration tracking with the hyponatremia guard, the
+              10-page reading gate, and the AES-256-GCM encrypted photo vault.
+            - **75-day behavioural science curriculum** with resolved citations.
+            - **Sovereign data controls**: JSON archive export and a zero-fill wipe.
+            - **47 unit tests, 0 failures.**
+
+            See `CHANGELOG.md` for the full 1.1.0 entry.
+
+            ### Installation
             Download and install `app-debug.apk` on Android 8.0+ (API 26+) devices.
           files: app/build/outputs/apk/debug/app-debug.apk
           draft: false
