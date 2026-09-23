@@ -37,7 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ascend75.core.common.domain.ChallengeMode
+import com.ascend75.core.domain.model.ChallengeMode
 import com.ascend75.core.designsystem.components.AscendButton
 import com.ascend75.core.designsystem.components.AscendButtonVariant
 import com.ascend75.core.designsystem.components.GlassCard

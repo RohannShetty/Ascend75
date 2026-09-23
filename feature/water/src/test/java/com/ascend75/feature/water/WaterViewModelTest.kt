@@ -1,9 +1,10 @@
 package com.ascend75.feature.water
 
-import com.ascend75.core.database.dao.TaskEntryDao
-import com.ascend75.core.database.dao.WaterLogDao
-import com.ascend75.core.database.entities.TaskEntryEntity
-import com.ascend75.core.database.entities.WaterLogEntity
+import com.ascend75.core.domain.model.HabitType
+import com.ascend75.core.domain.model.TaskEntry
+import com.ascend75.core.domain.model.WaterLog
+import com.ascend75.core.domain.repository.TaskRepository
+import com.ascend75.core.domain.repository.WaterRepository
 import io.mockk.coEvery
 import io.mockk.mockk
 import kotlinx.coroutines.Dispatchers
@@ -22,21 +23,21 @@ import org.junit.Test
 @OptIn(ExperimentalCoroutinesApi::class)
 class WaterViewModelTest {
 
-    private val taskEntryDao = mockk<TaskEntryDao>(relaxed = true)
-    private val waterLogDao = mockk<WaterLogDao>(relaxed = true)
+    private val taskRepository = mockk<TaskRepository>(relaxed = true)
+    private val waterRepository = mockk<WaterRepository>(relaxed = true)
 
     private val taskId = "water-task"
 
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        coEvery { taskEntryDao.getTaskById(taskId) } returns TaskEntryEntity(
+        coEvery { taskRepository.getTask(taskId) } returns TaskEntry(
             id = taskId,
             dailyRecordId = "record",
-            habitType = "WATER",
+            habitType = HabitType.WATER,
             targetValue = 3800.0
         )
-        coEvery { waterLogDao.getSince(taskId, 0L) } returns emptyList()
+        coEvery { waterRepository.logsForTask(taskId) } returns emptyList()
     }
 
     @After
@@ -46,7 +47,7 @@ class WaterViewModelTest {
 
     @Test
     fun warningsAreBasedOnTheCumulativeRollingHourNotTheSingleEntry() = runTest {
-        val viewModel = WaterViewModel(taskEntryDao, waterLogDao)
+        val viewModel = WaterViewModel(taskRepository, waterRepository)
 
         viewModel.logWater(500, taskId)
         assertEquals(500, viewModel.uiState.value.currentTotalMl)
@@ -59,7 +60,7 @@ class WaterViewModelTest {
 
     @Test
     fun exactlyTwelveHundredMillilitresInTheHourIsAllowedAndOneMoreTriggersTheWarning() = runTest {
-        val viewModel = WaterViewModel(taskEntryDao, waterLogDao)
+        val viewModel = WaterViewModel(taskRepository, waterRepository)
         viewModel.logWater(1200, taskId, forceLog = true)
 
         assertFalse("1,200 ml in one hour is at the ceiling, not over it", viewModel.checkHyponatremiaRisk(0))
@@ -69,15 +70,15 @@ class WaterViewModelTest {
     @Test
     fun intakeOlderThanSixtyMinutesFallsOutOfTheWindow() = runTest {
         val sixtyOneMinutesAgo = System.currentTimeMillis() - 61 * 60 * 1000L
-        coEvery { waterLogDao.getSince(taskId, 0L) } returns listOf(
-            WaterLogEntity(
+        coEvery { waterRepository.logsForTask(taskId) } returns listOf(
+            WaterLog(
                 id = "old",
                 taskEntryId = taskId,
                 amountMl = 1500,
                 loggedAt = sixtyOneMinutesAgo
             )
         )
-        val viewModel = WaterViewModel(taskEntryDao, waterLogDao)
+        val viewModel = WaterViewModel(taskRepository, waterRepository)
 
         viewModel.initializeFrom(taskId)
 
@@ -95,11 +96,11 @@ class WaterViewModelTest {
     @Test
     fun restoreRebuildsTheTotalAndCompletionStateFromPersistedLogs() = runTest {
         val now = System.currentTimeMillis()
-        coEvery { waterLogDao.getSince(taskId, 0L) } returns listOf(
-            WaterLogEntity(id = "a", taskEntryId = taskId, amountMl = 2000, loggedAt = now - 120_000L),
-            WaterLogEntity(id = "b", taskEntryId = taskId, amountMl = 500, loggedAt = now - 60_000L)
+        coEvery { waterRepository.logsForTask(taskId) } returns listOf(
+            WaterLog(id = "a", taskEntryId = taskId, amountMl = 2000, loggedAt = now - 120_000L),
+            WaterLog(id = "b", taskEntryId = taskId, amountMl = 500, loggedAt = now - 60_000L)
         )
-        val viewModel = WaterViewModel(taskEntryDao, waterLogDao)
+        val viewModel = WaterViewModel(taskRepository, waterRepository)
 
         viewModel.initializeFrom(taskId)
 
@@ -112,7 +113,7 @@ class WaterViewModelTest {
 
     @Test
     fun dismissingTheWarningDoesNotRecordTheIntakeButConfirmingItDoes() = runTest {
-        val viewModel = WaterViewModel(taskEntryDao, waterLogDao)
+        val viewModel = WaterViewModel(taskRepository, waterRepository)
 
         viewModel.logWater(1300, taskId)
         assertTrue("An over-rate entry raises the warning instead of being recorded", viewModel.uiState.value.showHyponatremiaWarning)

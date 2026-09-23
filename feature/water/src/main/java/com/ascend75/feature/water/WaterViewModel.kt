@@ -2,9 +2,8 @@ package com.ascend75.feature.water
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ascend75.core.database.dao.TaskEntryDao
-import com.ascend75.core.database.dao.WaterLogDao
-import com.ascend75.core.database.entities.WaterLogEntity
+import com.ascend75.core.domain.repository.TaskRepository
+import com.ascend75.core.domain.repository.WaterRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -30,8 +29,8 @@ data class WaterUiState(
 
 @HiltViewModel
 class WaterViewModel @Inject constructor(
-    private val taskEntryDao: TaskEntryDao,
-    private val waterLogDao: WaterLogDao
+    private val taskRepository: TaskRepository,
+    private val waterRepository: WaterRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WaterUiState())
@@ -45,13 +44,13 @@ class WaterViewModel @Inject constructor(
      * process restart does not reset the pacing clock.
      */
     suspend fun initializeFrom(taskId: String) {
-        val task = taskEntryDao.getTaskById(taskId)
+        val task = taskRepository.getTask(taskId)
         if (task == null) {
             _uiState.update { it.copy(errorMessage = "Hydration task not found.") }
             return
         }
 
-        val storedLogs = waterLogDao.getSince(taskId, 0L)
+        val storedLogs = waterRepository.logsForTask(taskId)
         val restoredTotal = storedLogs.sumOf { it.amountMl }
         val targetMl = task.targetValue.toInt()
 
@@ -90,21 +89,19 @@ class WaterViewModel @Inject constructor(
 
         pendingAmountMl = null
         viewModelScope.launch {
-            waterLogDao.insert(
-                WaterLogEntity(
-                    id = UUID.randomUUID().toString(),
-                    taskEntryId = taskId,
-                    amountMl = amountMl,
-                    loggedAt = now
-                )
+            waterRepository.addLog(
+                id = UUID.randomUUID().toString(),
+                taskEntryId = taskId,
+                amountMl = amountMl,
+                loggedAt = now
             )
 
             val newTotal = _uiState.value.currentTotalMl + amountMl
             val isDone = newTotal >= _uiState.value.targetMl
 
-            taskEntryDao.updateTaskCurrentValue(taskId, newTotal.toDouble())
+            taskRepository.setCurrentValue(taskId, newTotal.toDouble())
             if (isDone) {
-                taskEntryDao.updateTaskCompletion(taskId, isCompleted = true, completedAt = now)
+                taskRepository.setCompletion(taskId, isCompleted = true, completedAt = now)
             }
 
             _uiState.update { state ->

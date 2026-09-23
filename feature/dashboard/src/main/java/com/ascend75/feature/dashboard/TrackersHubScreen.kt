@@ -18,7 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ascend75.core.database.entities.TaskEntryEntity
+import com.ascend75.core.domain.model.HabitType
+import com.ascend75.core.domain.model.TaskEntry
 import com.ascend75.core.designsystem.components.AscendLoadingGate
 import com.ascend75.core.designsystem.components.GlassCard
 import com.ascend75.core.designsystem.theme.AscendPalette
@@ -27,7 +28,7 @@ import com.ascend75.core.designsystem.theme.AscendTypography
 @Composable
 fun TrackersHubScreen(
     viewModel: TrackersHubViewModel,
-    onOpenTracker: (TaskEntryEntity) -> Unit,
+    onOpenTracker: (TaskEntry) -> Unit,
     onOpenVault: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -74,7 +75,7 @@ fun TrackersHubScreen(
 
                 items(state.workouts, key = { task -> task.id }) { task ->
                     TrackerRow(
-                        title = if (task.habitType == "WORKOUT_1") {
+                        title = if (task.habitType == HabitType.WORKOUT_1) {
                             "Outdoor Workout (45m)"
                         } else {
                             "Second Workout (45m)"

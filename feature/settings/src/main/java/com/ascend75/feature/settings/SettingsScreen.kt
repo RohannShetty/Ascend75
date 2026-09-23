@@ -32,7 +32,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.core.content.FileProvider
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ascend75.core.common.domain.ChallengeMode
+import com.ascend75.core.domain.model.ChallengeMode
 import com.ascend75.core.designsystem.components.AscendButton
 import com.ascend75.core.designsystem.components.AscendButtonVariant
 import com.ascend75.core.designsystem.components.GlassCard

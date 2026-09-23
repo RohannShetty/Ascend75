@@ -35,9 +35,12 @@ android {
 
 dependencies {
     implementation(project(":core:common"))
+    implementation(project(":core:domain"))
+    testImplementation(project(":core:data"))
+    // Test-only: the wipe/export integration test drives a real in-memory schema.
+    testImplementation(project(":core:database"))
+    testImplementation(project(":core:datastore"))
     implementation(project(":core:designsystem"))
-    implementation(project(":core:database"))
-    implementation(project(":core:datastore"))
     implementation(project(":core:crypto"))
 
     implementation(platform(libs.androidx.compose.bom))

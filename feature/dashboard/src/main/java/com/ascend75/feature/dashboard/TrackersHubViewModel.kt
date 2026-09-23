@@ -2,8 +2,9 @@ package com.ascend75.feature.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ascend75.core.database.entities.TaskEntryEntity
-import com.ascend75.feature.dashboard.data.DailyProtocolRepository
+import com.ascend75.core.domain.model.HabitType
+import com.ascend75.core.domain.model.TaskEntry
+import com.ascend75.core.domain.repository.TodayProtocolRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,16 +16,16 @@ import javax.inject.Inject
 data class TrackersHubUiState(
     val isLoading: Boolean = true,
     val dayNumber: Int = 1,
-    val workouts: List<TaskEntryEntity> = emptyList(),
-    val water: TaskEntryEntity? = null,
-    val reading: TaskEntryEntity? = null,
-    val photo: TaskEntryEntity? = null,
+    val workouts: List<TaskEntry> = emptyList(),
+    val water: TaskEntry? = null,
+    val reading: TaskEntry? = null,
+    val photo: TaskEntry? = null,
     val errorMessage: String? = null
 )
 
 @HiltViewModel
 class TrackersHubViewModel @Inject constructor(
-    private val dailyProtocolRepository: DailyProtocolRepository
+    private val todayProtocolRepository: TodayProtocolRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(TrackersHubUiState())
@@ -32,7 +33,7 @@ class TrackersHubViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            dailyProtocolRepository.observeToday().collect { protocol ->
+            todayProtocolRepository.observeToday().collect { protocol ->
                 if (protocol == null) {
                     _uiState.update { it.copy(isLoading = false) }
                 } else {
@@ -42,11 +43,11 @@ class TrackersHubViewModel @Inject constructor(
                             isLoading = false,
                             dayNumber = protocol.record.dayNumber,
                             workouts = tasks
-                                .filter { task -> task.habitType.startsWith("WORKOUT") }
-                                .sortedBy { task -> task.habitType },
-                            water = tasks.firstOrNull { task -> task.habitType == "WATER" },
-                            reading = tasks.firstOrNull { task -> task.habitType == "READING" },
-                            photo = tasks.firstOrNull { task -> task.habitType == "PHOTO" },
+                                .filter { task -> task.habitType.isWorkout }
+                                .sortedBy { task -> task.habitType.ordinal },
+                            water = tasks.firstOrNull { task -> task.habitType == HabitType.WATER },
+                            reading = tasks.firstOrNull { task -> task.habitType == HabitType.READING },
+                            photo = tasks.firstOrNull { task -> task.habitType == HabitType.PHOTO },
                             errorMessage = null
                         )
                     }

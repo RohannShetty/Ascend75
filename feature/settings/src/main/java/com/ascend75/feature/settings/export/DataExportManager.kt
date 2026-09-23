@@ -1,14 +1,14 @@
 package com.ascend75.feature.settings.export
 
 import android.content.Context
-import com.ascend75.core.database.dao.ChallengeDao
-import com.ascend75.core.database.dao.DailyRecordDao
-import com.ascend75.core.database.dao.ProgressPhotoDao
-import com.ascend75.core.database.dao.ReadingSessionDao
-import com.ascend75.core.database.dao.TaskEntryDao
-import com.ascend75.core.database.dao.WaterLogDao
-import com.ascend75.core.database.dao.WorkoutSessionDao
-import com.ascend75.core.datastore.AscendPreferencesDataSource
+import com.ascend75.core.domain.repository.ChallengeRepository
+import com.ascend75.core.domain.repository.DailyRecordRepository
+import com.ascend75.core.domain.repository.ReadingRepository
+import com.ascend75.core.domain.repository.SettingsRepository
+import com.ascend75.core.domain.repository.TaskRepository
+import com.ascend75.core.domain.repository.VaultRepository
+import com.ascend75.core.domain.repository.WaterRepository
+import com.ascend75.core.domain.repository.WorkoutRepository
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -21,19 +21,21 @@ import javax.inject.Singleton
 @Singleton
 class DataExportManager @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val challengeDao: ChallengeDao,
-    private val dailyRecordDao: DailyRecordDao,
-    private val taskEntryDao: TaskEntryDao,
-    private val workoutSessionDao: WorkoutSessionDao,
-    private val waterLogDao: WaterLogDao,
-    private val readingSessionDao: ReadingSessionDao,
-    private val progressPhotoDao: ProgressPhotoDao,
-    private val preferencesDataSource: AscendPreferencesDataSource
+    private val challengeRepository: ChallengeRepository,
+    private val dailyRecordRepository: DailyRecordRepository,
+    private val taskRepository: TaskRepository,
+    private val workoutRepository: WorkoutRepository,
+    private val waterRepository: WaterRepository,
+    private val readingRepository: ReadingRepository,
+    private val vaultRepository: VaultRepository,
+    private val settingsRepository: SettingsRepository
 ) {
 
     /**
-     * Serialises the whole challenge history — every daily record with its tasks, plus every
-     * workout, hydration, reading and vault row — into one JSON document in the cache dir.
+     * Serialises the whole challenge history -- every daily record with its tasks, plus every
+     * workout, hydration, reading and vault row -- into one JSON document in the cache dir.
+     *
+     * The JSON keys are part of the supported export format and must not change.
      */
     suspend fun exportToFile(): File = withContext(Dispatchers.IO) {
         val root = JSONObject()
@@ -41,14 +43,14 @@ class DataExportManager @Inject constructor(
         root.put("schemaVersion", 1)
 
         val challengesArray = JSONArray()
-        val active = challengeDao.getActiveChallenge()
+        val active = challengeRepository.getActiveChallenge()
         if (active != null) {
             challengesArray.put(
                 JSONObject().apply {
                     put("id", active.id)
-                    put("mode", active.mode)
+                    put("mode", active.mode.name)
                     put("attemptNumber", active.attemptNumber)
-                    put("status", active.status)
+                    put("status", active.status.name)
                     put("startedAt", active.startedAt)
                     put("endedAt", active.endedAt)
                     put("configJson", active.configJson)
@@ -56,15 +58,14 @@ class DataExportManager @Inject constructor(
             )
 
             val dailyRecordsArray = JSONArray()
-            val records = dailyRecordDao.getDailyRecordsForChallenge(active.id)
+            val records = dailyRecordRepository.recordsForChallenge(active.id)
             for (record in records) {
                 val tasksArray = JSONArray()
-                val withTasks = dailyRecordDao.getDailyRecordWithTasks(active.id, record.dayNumber)
-                withTasks?.tasks?.forEach { task ->
+                dailyRecordRepository.tasksForDay(active.id, record.dayNumber).forEach { task ->
                     tasksArray.put(
                         JSONObject().apply {
                             put("id", task.id)
-                            put("habitType", task.habitType)
+                            put("habitType", task.habitType.raw)
                             put("isCompleted", task.isCompleted)
                             put("completedAt", task.completedAt)
                             put("targetValue", task.targetValue)
@@ -92,7 +93,7 @@ class DataExportManager @Inject constructor(
         root.put(
             "workoutSessions",
             JSONArray().apply {
-                workoutSessionDao.getAll().forEach { session ->
+                workoutRepository.allSessions().forEach { session ->
                     put(
                         JSONObject().apply {
                             put("id", session.id)
@@ -113,7 +114,7 @@ class DataExportManager @Inject constructor(
         root.put(
             "waterLogs",
             JSONArray().apply {
-                waterLogDao.getAll().forEach { log ->
+                waterRepository.allLogs().forEach { log ->
                     put(
                         JSONObject().apply {
                             put("id", log.id)
@@ -129,7 +130,7 @@ class DataExportManager @Inject constructor(
         root.put(
             "readingSessions",
             JSONArray().apply {
-                readingSessionDao.getAll().forEach { session ->
+                readingRepository.allSessions().forEach { session ->
                     put(
                         JSONObject().apply {
                             put("id", session.id)
@@ -151,7 +152,7 @@ class DataExportManager @Inject constructor(
         root.put(
             "progressPhotos",
             JSONArray().apply {
-                progressPhotoDao.getAll().forEach { photo ->
+                vaultRepository.allPhotoRecords().forEach { photo ->
                     put(
                         JSONObject().apply {
                             put("id", photo.id)
@@ -177,15 +178,15 @@ class DataExportManager @Inject constructor(
         onWipeVault()
 
         // 2. Truncate Room database tables
-        progressPhotoDao.clearAll()
-        readingSessionDao.clearAll()
-        waterLogDao.clearAll()
-        workoutSessionDao.clearAll()
-        taskEntryDao.clearAllTasks()
-        dailyRecordDao.clearAllDailyRecords()
-        challengeDao.clearAllChallenges()
+        vaultRepository.clearAll()
+        readingRepository.clearAll()
+        waterRepository.clearAll()
+        workoutRepository.clearAll()
+        taskRepository.clearAll()
+        dailyRecordRepository.clearAll()
+        challengeRepository.clearAll()
 
         // 3. Clear DataStore preferences
-        preferencesDataSource.clearAllPreferences()
+        settingsRepository.clearAll()
     }
 }

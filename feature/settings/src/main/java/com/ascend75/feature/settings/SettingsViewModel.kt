@@ -3,12 +3,12 @@ package com.ascend75.feature.settings
 import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ascend75.core.common.domain.ChallengeMode
 import com.ascend75.core.crypto.KeystoreManager
 import com.ascend75.core.crypto.VaultFileStorage
-import com.ascend75.core.database.dao.ChallengeDao
-import com.ascend75.core.datastore.AscendPreferencesDataSource
-import com.ascend75.core.datastore.UserPreferences
+import com.ascend75.core.domain.model.ChallengeMode
+import com.ascend75.core.domain.model.UserPreferences
+import com.ascend75.core.domain.repository.ChallengeRepository
+import com.ascend75.core.domain.repository.SettingsRepository
 import com.ascend75.feature.settings.export.DataExportManager
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -35,11 +35,11 @@ data class SettingsUiState(
 @HiltViewModel
 class SettingsViewModel @Inject constructor(
     @ApplicationContext private val context: Context,
-    private val preferencesDataSource: AscendPreferencesDataSource,
+    private val settingsRepository: SettingsRepository,
     private val dataExportManager: DataExportManager,
     private val vaultFileStorage: VaultFileStorage,
     private val keystoreManager: KeystoreManager,
-    private val challengeDao: ChallengeDao
+    private val challengeRepository: ChallengeRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(SettingsUiState())
@@ -47,7 +47,7 @@ class SettingsViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            preferencesDataSource.userPreferencesFlow.collect { prefs ->
+            settingsRepository.preferences.collect { prefs ->
                 _uiState.update { it.copy(userPreferences = prefs) }
             }
         }
@@ -56,26 +56,26 @@ class SettingsViewModel @Inject constructor(
 
     fun setBiometricEnabled(enabled: Boolean) {
         viewModelScope.launch {
-            preferencesDataSource.setBiometricEnabled(enabled)
+            settingsRepository.setBiometricEnabled(enabled)
         }
     }
 
     fun setSleepCutoff(hour: Int, minute: Int) {
         viewModelScope.launch {
-            preferencesDataSource.setSleepCutoff(hour, minute)
+            settingsRepository.setSleepCutoff(hour, minute)
         }
     }
 
     /**
      * Writes the mode to preferences *and* to the active challenge row so the dashboard's mode pill
-     * reflects the change. Today's habit rows are not re-materialised — that happens at the next
+     * reflects the change. Today's habit rows are not re-materialised - that happens at the next
      * day boundary.
      */
     fun setMode(mode: ChallengeMode) {
         viewModelScope.launch {
-            preferencesDataSource.setSelectedMode(mode.name)
-            challengeDao.getActiveChallenge()?.let { active ->
-                challengeDao.updateChallenge(active.copy(mode = mode.name))
+            settingsRepository.setSelectedMode(mode.name)
+            challengeRepository.getActiveChallenge()?.let { active ->
+                challengeRepository.updateChallenge(active.copy(mode = mode))
             }
         }
     }

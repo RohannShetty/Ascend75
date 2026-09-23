@@ -2,11 +2,11 @@ package com.ascend75.feature.learn
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ascend75.core.database.dao.ChallengeDao
-import com.ascend75.core.database.dao.DailyRecordDao
-import com.ascend75.core.database.dao.ScienceCardDao
-import com.ascend75.core.database.entities.ScienceCardEntity
-import com.ascend75.core.datastore.AscendPreferencesDataSource
+import com.ascend75.core.domain.model.ScienceCard
+import com.ascend75.core.domain.repository.ChallengeRepository
+import com.ascend75.core.domain.repository.DailyRecordRepository
+import com.ascend75.core.domain.repository.ScienceRepository
+import com.ascend75.core.domain.repository.SettingsRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,18 +25,18 @@ data class ScienceLibraryUiState(
     val currentDay: Int = 1,
     val searchQuery: String = "",
     val selectedCategory: String = "ALL",
-    val unlockedCards: List<ScienceCardEntity> = emptyList(),
-    val filteredCards: List<ScienceCardEntity> = emptyList(),
-    val selectedCard: ScienceCardEntity? = null
+    val unlockedCards: List<ScienceCard> = emptyList(),
+    val filteredCards: List<ScienceCard> = emptyList(),
+    val selectedCard: ScienceCard? = null
 )
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class ScienceLibraryViewModel @Inject constructor(
-    private val scienceCardDao: ScienceCardDao,
-    private val challengeDao: ChallengeDao,
-    private val dailyRecordDao: DailyRecordDao,
-    private val preferencesDataSource: AscendPreferencesDataSource
+    private val scienceRepository: ScienceRepository,
+    private val challengeRepository: ChallengeRepository,
+    private val dailyRecordRepository: DailyRecordRepository,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ScienceLibraryUiState())
@@ -53,19 +53,19 @@ class ScienceLibraryViewModel @Inject constructor(
     private fun observeUnlockedCards() {
         viewModelScope.launch {
             combine(
-                challengeDao.observeActiveChallenge(),
-                preferencesDataSource.userPreferencesFlow
+                challengeRepository.observeActiveChallenge(),
+                settingsRepository.preferences
             ) { challenge, prefs -> challenge?.id ?: prefs.activeChallengeId }
                 .distinctUntilChanged()
                 .flatMapLatest { challengeId ->
                     if (challengeId == null) {
-                        scienceCardDao.observeUnlockedCards(1).map { cards -> 1 to cards }
+                        scienceRepository.observeUnlockedCards(1).map { cards -> 1 to cards }
                     } else {
-                        dailyRecordDao.observeDailyRecordsForChallenge(challengeId)
+                        dailyRecordRepository.observeRecordsForChallenge(challengeId)
                             .map { records -> records.maxOfOrNull { it.dayNumber } ?: 1 }
                             .distinctUntilChanged()
                             .flatMapLatest { day ->
-                                scienceCardDao.observeUnlockedCards(day).map { cards -> day to cards }
+                                scienceRepository.observeUnlockedCards(day).map { cards -> day to cards }
                             }
                     }
                 }
@@ -105,17 +105,17 @@ class ScienceLibraryViewModel @Inject constructor(
         }
     }
 
-    fun selectCard(card: ScienceCardEntity?) {
+    fun selectCard(card: ScienceCard?) {
         _uiState.update { it.copy(selectedCard = card) }
     }
 
-    fun toggleBookmark(card: ScienceCardEntity) {
+    fun toggleBookmark(card: ScienceCard) {
         viewModelScope.launch {
-            scienceCardDao.updateBookmark(card.dayNumber, !card.isBookmarked)
+            scienceRepository.setBookmarked(card.dayNumber, !card.isBookmarked)
         }
     }
 
-    private fun filterCards(cards: List<ScienceCardEntity>, query: String, category: String): List<ScienceCardEntity> {
+    private fun filterCards(cards: List<ScienceCard>, query: String, category: String): List<ScienceCard> {
         return cards.filter { card ->
             val matchesCategory = if (category == "ALL") true else card.category.equals(category, ignoreCase = true)
             val matchesQuery = if (query.isBlank()) true else {

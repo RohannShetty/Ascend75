@@ -3,6 +3,14 @@ package com.ascend75.feature.settings.export
 import android.content.Context
 import androidx.room.Room
 import androidx.test.core.app.ApplicationProvider
+import com.ascend75.core.data.repository.DefaultChallengeRepository
+import com.ascend75.core.data.repository.DefaultDailyRecordRepository
+import com.ascend75.core.data.repository.DefaultReadingRepository
+import com.ascend75.core.data.repository.DefaultSettingsRepository
+import com.ascend75.core.data.repository.DefaultTaskRepository
+import com.ascend75.core.data.repository.DefaultVaultRepository
+import com.ascend75.core.data.repository.DefaultWaterRepository
+import com.ascend75.core.data.repository.DefaultWorkoutRepository
 import com.ascend75.core.database.AscendDatabase
 import com.ascend75.core.database.entities.ChallengeInstanceEntity
 import com.ascend75.core.database.entities.DailyRecordEntity
@@ -28,7 +36,8 @@ import java.util.UUID
 
 /**
  * The wipe and the export are the two places where "everything" has to actually mean everything, so
- * both are exercised against a real schema rather than a mock echo.
+ * both are exercised against a real schema (through the real repository implementations) rather
+ * than a mock echo.
  */
 @RunWith(RobolectricTestRunner::class)
 class DataWipeIntegrationTest {
@@ -44,16 +53,26 @@ class DataWipeIntegrationTest {
             .allowMainThreadQueries()
             .build()
         preferencesDataSource = mockk(relaxed = true)
-        exportManager = DataExportManager(
-            context = context,
+
+        val settingsRepository = DefaultSettingsRepository(preferencesDataSource)
+        val challengeRepository = DefaultChallengeRepository(
+            database = database,
             challengeDao = database.challengeDao(),
             dailyRecordDao = database.dailyRecordDao(),
             taskEntryDao = database.taskEntryDao(),
-            workoutSessionDao = database.workoutSessionDao(),
-            waterLogDao = database.waterLogDao(),
-            readingSessionDao = database.readingSessionDao(),
-            progressPhotoDao = database.progressPhotoDao(),
-            preferencesDataSource = preferencesDataSource
+            settingsRepository = settingsRepository
+        )
+
+        exportManager = DataExportManager(
+            context = context,
+            challengeRepository = challengeRepository,
+            dailyRecordRepository = DefaultDailyRecordRepository(database.dailyRecordDao()),
+            taskRepository = DefaultTaskRepository(database.taskEntryDao()),
+            workoutRepository = DefaultWorkoutRepository(database.workoutSessionDao()),
+            waterRepository = DefaultWaterRepository(database.waterLogDao()),
+            readingRepository = DefaultReadingRepository(database.readingSessionDao()),
+            vaultRepository = DefaultVaultRepository(database.progressPhotoDao()),
+            settingsRepository = settingsRepository
         )
     }
 
@@ -94,6 +113,7 @@ class DataWipeIntegrationTest {
         assertEquals(1, records.length())
         val tasks = records.getJSONObject(0).getJSONArray("tasks")
         assertEquals("Daily records must carry their task rows", 1, tasks.length())
+        assertEquals("WORKOUT_1", tasks.getJSONObject(0).getString("habitType"))
 
         assertEquals(1, root.getJSONArray("waterLogs").length())
         assertEquals(1, root.getJSONArray("workoutSessions").length())

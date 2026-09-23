@@ -2,20 +2,14 @@ package com.ascend75.feature.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ascend75.core.common.domain.ChallengeMode
-import com.ascend75.core.common.domain.ChallengeRulesEngine
-import com.ascend75.core.common.domain.DayBoundaryEvaluator
-import com.ascend75.core.database.dao.ChallengeDao
-import com.ascend75.core.database.dao.DailyRecordDao
-import com.ascend75.core.database.dao.ScienceCardDao
-import com.ascend75.core.database.dao.TaskEntryDao
-import com.ascend75.core.database.entities.ChallengeInstanceEntity
-import com.ascend75.core.database.entities.DailyRecordEntity
-import com.ascend75.core.database.entities.ScienceCardEntity
-import com.ascend75.core.database.entities.TaskEntryEntity
-import com.ascend75.core.datastore.AscendPreferencesDataSource
-import com.ascend75.feature.dashboard.data.DailyProtocolRepository
-import com.ascend75.feature.dashboard.data.TodayProtocol
+import com.ascend75.core.domain.model.ChallengeMode
+import com.ascend75.core.domain.model.TaskEntry
+import com.ascend75.core.domain.model.TodayProtocol
+import com.ascend75.core.domain.repository.ChallengeRepository
+import com.ascend75.core.domain.repository.ScienceRepository
+import com.ascend75.core.domain.repository.SettingsRepository
+import com.ascend75.core.domain.repository.TaskRepository
+import com.ascend75.core.domain.repository.TodayProtocolRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,9 +20,6 @@ import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalTime
-import java.util.UUID
 import javax.inject.Inject
 
 private val MilestoneDays = setOf(1, 7, 14, 21, 30, 45, 60, 75)
@@ -36,12 +27,11 @@ private val MilestoneDays = setOf(1, 7, 14, 21, 30, 45, 60, 75)
 @OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class DashboardViewModel @Inject constructor(
-    private val challengeDao: ChallengeDao,
-    private val dailyRecordDao: DailyRecordDao,
-    private val taskEntryDao: TaskEntryDao,
-    private val scienceCardDao: ScienceCardDao,
-    private val preferencesDataSource: AscendPreferencesDataSource,
-    private val dailyProtocolRepository: DailyProtocolRepository
+    private val challengeRepository: ChallengeRepository,
+    private val scienceRepository: ScienceRepository,
+    private val taskRepository: TaskRepository,
+    private val settingsRepository: SettingsRepository,
+    private val todayProtocolRepository: TodayProtocolRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(DashboardUiState())
@@ -59,16 +49,16 @@ class DashboardViewModel @Inject constructor(
 
     private fun observeDashboardData() {
         viewModelScope.launch {
-            dailyProtocolRepository.observeToday()
+            todayProtocolRepository.observeToday()
                 .flatMapLatest { protocol ->
                     if (protocol == null) {
-                        flowOf<Pair<TodayProtocol?, ScienceCardEntity?>>(null to null)
+                        flowOf(null to null)
                     } else {
-                        scienceCardDao.observeCardByDay(protocol.record.dayNumber)
-                            .map { card -> protocol to card }
+                        scienceRepository.observeCardByDay(protocol.record.dayNumber)
+                            .map { card -> protocol to card?.title }
                     }
                 }
-                .collect { (protocol, card) ->
+                .collect { (protocol, cardTitle) ->
                     if (protocol == null) {
                         _uiState.update {
                             it.copy(
@@ -77,16 +67,16 @@ class DashboardViewModel @Inject constructor(
                             )
                         }
                     } else {
-                        applyProtocol(protocol, card)
+                        applyProtocol(protocol, cardTitle)
                         if (protocol.isPastCutoff) {
-                            dailyProtocolRepository.advanceDayIfDue(protocol)
+                            todayProtocolRepository.advanceDayIfDue(protocol)
                         }
                     }
                 }
         }
     }
 
-    private fun applyProtocol(protocol: TodayProtocol, card: ScienceCardEntity?) {
+    private fun applyProtocol(protocol: TodayProtocol, cardTitle: String?) {
         val completed = protocol.tasks.count { it.isCompleted }
         val isStrictFailure = protocol.isPastCutoff &&
             completed < protocol.tasks.size &&
@@ -109,7 +99,7 @@ class DashboardViewModel @Inject constructor(
                 isPastCutoff = protocol.isPastCutoff,
                 showResetDialog = isStrictFailure,
                 showMilestoneDialog = state.showMilestoneDialog || shouldCelebrate,
-                dailyScienceCardTitle = card?.title,
+                dailyScienceCardTitle = cardTitle,
                 sleepCutoffHour = protocol.prefs.sleepCutoffHour,
                 sleepCutoffMinute = protocol.prefs.sleepCutoffMinute,
                 errorMessage = null
@@ -120,24 +110,21 @@ class DashboardViewModel @Inject constructor(
     fun toggleTaskCompletion(taskId: String, isCompleted: Boolean) {
         viewModelScope.launch {
             val completedAt = if (isCompleted) System.currentTimeMillis() else null
-            taskEntryDao.updateTaskCompletion(taskId, isCompleted, completedAt)
+            taskRepository.setCompletion(taskId, isCompleted, completedAt)
         }
     }
 
-    fun selectTaskForDetail(task: TaskEntryEntity?) {
+    fun selectTaskForDetail(task: TaskEntry?) {
         _uiState.update { it.copy(selectedTaskForDetail = task) }
     }
 
     fun saveTaskNotes(taskId: String, note: String) {
         viewModelScope.launch {
-            val existing = taskEntryDao.getTaskById(taskId)
-            if (existing != null) {
-                taskEntryDao.updateTaskEntry(existing.copy(notes = note))
-                _uiState.update { state ->
-                    state.copy(
-                        selectedTaskForDetail = state.selectedTaskForDetail?.copy(notes = note)
-                    )
-                }
+            taskRepository.saveNotes(taskId, note)
+            _uiState.update { state ->
+                state.copy(
+                    selectedTaskForDetail = state.selectedTaskForDetail?.copy(notes = note)
+                )
             }
         }
     }
@@ -146,71 +133,23 @@ class DashboardViewModel @Inject constructor(
         val day = _uiState.value.dayNumber
         dismissedMilestoneDay = day
         _uiState.update { it.copy(showMilestoneDialog = false) }
-        viewModelScope.launch { preferencesDataSource.setLastCelebratedDay(day) }
+        viewModelScope.launch { settingsRepository.setLastCelebratedDay(day) }
     }
 
+    /**
+     * Archives the failed Strict attempt and starts a fresh one. All database writes happen inside
+     * the challenge repository's transaction, so a process death cannot leave a half-reset state.
+     */
     fun archiveAndResetStrictAttempt(reflectionNote: String, switchToFlexible: Boolean) {
         viewModelScope.launch {
             isResetting = true
             try {
-                val challenge = challengeDao.getActiveChallenge() ?: return@launch
-
-                // 1. Archive previous attempt
-                challengeDao.updateChallenge(
-                    challenge.copy(
-                        status = "RESET_ARCHIVED",
-                        endedAt = System.currentTimeMillis()
-                    )
+                challengeRepository.archiveAndRestart(
+                    reflectionNote = reflectionNote,
+                    newMode = if (switchToFlexible) ChallengeMode.FLEXIBLE_75.name else ChallengeMode.STRICT_75.name,
+                    sleepCutoffHour = _uiState.value.sleepCutoffHour,
+                    sleepCutoffMinute = _uiState.value.sleepCutoffMinute
                 )
-
-                // 2. Start new attempt #N+1
-                val newChallengeId = UUID.randomUUID().toString()
-                val newMode = if (switchToFlexible) ChallengeMode.FLEXIBLE_75 else ChallengeMode.STRICT_75
-                val newChallenge = ChallengeInstanceEntity(
-                    id = newChallengeId,
-                    attemptNumber = challenge.attemptNumber + 1,
-                    mode = newMode.name,
-                    status = "ACTIVE",
-                    startedAt = System.currentTimeMillis(),
-                    configJson = challenge.configJson
-                )
-                challengeDao.insertChallenge(newChallenge)
-
-                // 3. Create Day 1 for new attempt using the user's configured cutoff
-                val prefs = _uiState.value
-                val today = LocalDate.now()
-                val cutoffTimestamp = DayBoundaryEvaluator.calculateSleepCutoffTimestamp(
-                    calendarDate = today,
-                    sleepCutoffTime = LocalTime.of(prefs.sleepCutoffHour, prefs.sleepCutoffMinute)
-                )
-                val recordId = UUID.randomUUID().toString()
-                val newDailyRecord = DailyRecordEntity(
-                    id = recordId,
-                    challengeInstanceId = newChallengeId,
-                    dayNumber = 1,
-                    calendarDate = today.toEpochDay(),
-                    isCompleted = false,
-                    sleepCutoffTimestamp = cutoffTimestamp,
-                    reflectionNotes = reflectionNote
-                )
-                dailyRecordDao.insertDailyRecord(newDailyRecord)
-
-                // 4. Generate initial tasks
-                val taskEntities = ChallengeRulesEngine.getTasksForMode(newMode).map { spec ->
-                    TaskEntryEntity(
-                        id = UUID.randomUUID().toString(),
-                        dailyRecordId = recordId,
-                        habitType = spec.habitType,
-                        isCompleted = false,
-                        targetValue = spec.targetValue
-                    )
-                }
-                taskEntryDao.insertTaskEntries(taskEntities)
-
-                // 5. Update preferences
-                preferencesDataSource.setActiveChallengeId(newChallengeId)
-                preferencesDataSource.setSelectedMode(newMode.name)
-
                 _uiState.update { it.copy(showResetDialog = false) }
             } finally {
                 isResetting = false

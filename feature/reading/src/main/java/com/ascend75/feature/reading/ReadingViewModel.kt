@@ -2,9 +2,9 @@ package com.ascend75.feature.reading
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ascend75.core.database.dao.ReadingSessionDao
-import com.ascend75.core.database.dao.TaskEntryDao
-import com.ascend75.core.database.entities.ReadingSessionEntity
+import com.ascend75.core.domain.model.ReadingSession
+import com.ascend75.core.domain.repository.ReadingRepository
+import com.ascend75.core.domain.repository.TaskRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -31,8 +31,8 @@ data class ReadingUiState(
 
 @HiltViewModel
 class ReadingViewModel @Inject constructor(
-    private val taskEntryDao: TaskEntryDao,
-    private val readingSessionDao: ReadingSessionDao
+    private val taskRepository: TaskRepository,
+    private val readingRepository: ReadingRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ReadingUiState())
@@ -88,17 +88,15 @@ class ReadingViewModel @Inject constructor(
         val durationSeconds = _uiState.value.readingDurationSeconds
         viewModelScope.launch {
             val now = System.currentTimeMillis()
-            taskEntryDao.updateTaskCurrentValue(taskId, state.pagesRead.toDouble())
-            taskEntryDao.updateTaskCompletion(taskId, isCompleted = true, completedAt = now)
+            taskRepository.setCurrentValue(taskId, state.pagesRead.toDouble())
+            taskRepository.setCompletion(taskId, isCompleted = true, completedAt = now)
+            taskRepository.saveNotes(
+                taskId,
+                "Book: ${state.bookTitle}\nPages: ${state.startPage}-${state.endPage}\nTakeaway: ${state.keyTakeaway}"
+            )
 
-            val existing = taskEntryDao.getTaskById(taskId)
-            if (existing != null) {
-                val notes = "Book: ${state.bookTitle}\nPages: ${state.startPage}-${state.endPage}\nTakeaway: ${state.keyTakeaway}"
-                taskEntryDao.updateTaskEntry(existing.copy(notes = notes))
-            }
-
-            readingSessionDao.insert(
-                ReadingSessionEntity(
+            readingRepository.addSession(
+                ReadingSession(
                     id = UUID.randomUUID().toString(),
                     taskEntryId = taskId,
                     bookTitle = state.bookTitle.ifBlank { "Untitled" },

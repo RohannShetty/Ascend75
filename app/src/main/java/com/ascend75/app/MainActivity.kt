@@ -37,7 +37,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.ascend75.app.navigation.ARG_TASK_ID
 import com.ascend75.app.navigation.Screen
-import com.ascend75.core.database.dao.TaskEntryDao
+import com.ascend75.core.domain.model.HabitType
+import com.ascend75.core.domain.repository.TaskRepository
 import com.ascend75.core.datastore.AscendPreferencesDataSource
 import com.ascend75.core.designsystem.components.AscendBottomBar
 import com.ascend75.core.designsystem.components.AscendLoadingGate
@@ -72,7 +73,7 @@ class MainActivity : FragmentActivity() {
     lateinit var preferencesDataSource: AscendPreferencesDataSource
 
     @Inject
-    lateinit var taskEntryDao: TaskEntryDao
+    lateinit var taskRepository: TaskRepository
 
     /** Task id delivered by an `ascend75://task/<id>` deep link, drained once the shell is up. */
     private val pendingDeepLinkTaskId = mutableStateOf<String?>(null)
@@ -85,7 +86,7 @@ class MainActivity : FragmentActivity() {
             AscendTheme {
                 AscendApp(
                     preferencesDataSource = preferencesDataSource,
-                    taskEntryDao = taskEntryDao,
+                    taskRepository = taskRepository,
                     pendingDeepLinkTaskId = pendingDeepLinkTaskId.value,
                     onDeepLinkResolved = { pendingDeepLinkTaskId.value = null }
                 )
@@ -110,7 +111,7 @@ class MainActivity : FragmentActivity() {
 @Composable
 private fun AscendApp(
     preferencesDataSource: AscendPreferencesDataSource,
-    taskEntryDao: TaskEntryDao,
+    taskRepository: TaskRepository,
     pendingDeepLinkTaskId: String?,
     onDeepLinkResolved: () -> Unit
 ) {
@@ -252,7 +253,7 @@ private fun AscendApp(
                 val taskId = pendingDeepLinkTaskId ?: return@LaunchedEffect
                 if (!prefs.isOnboardingCompleted) return@LaunchedEffect
                 onDeepLinkResolved()
-                val task = taskEntryDao.getTaskById(taskId) ?: return@LaunchedEffect
+                val task = taskRepository.getTask(taskId) ?: return@LaunchedEffect
                 trackerRouteFor(task.habitType, task.id)?.let { route -> navController.navigate(route) }
             }
         }
@@ -291,12 +292,12 @@ private fun routeToTab(route: String?): AscendTab? = when {
  * Maps a habit type to its dedicated tracker destination. `DIET` has no tracker screen and returns
  * null so callers can omit the affordance entirely.
  */
-private fun trackerRouteFor(habitType: String, taskId: String): String? = when (habitType) {
-    "WORKOUT_1", "WORKOUT_2" -> Screen.Workout.createRoute(taskId)
-    "WATER" -> Screen.Water.createRoute(taskId)
-    "READING" -> Screen.Reading.createRoute(taskId)
-    "PHOTO" -> Screen.Photos.route
-    else -> null
+private fun trackerRouteFor(habitType: HabitType, taskId: String): String? = when (habitType) {
+    HabitType.WORKOUT_1, HabitType.WORKOUT_2 -> Screen.Workout.createRoute(taskId)
+    HabitType.WATER -> Screen.Water.createRoute(taskId)
+    HabitType.READING -> Screen.Reading.createRoute(taskId)
+    HabitType.PHOTO -> Screen.Photos.route
+    HabitType.DIET, HabitType.CUSTOM -> null
 }
 
 private fun NavHostController.navigateToTab(tab: AscendTab) {

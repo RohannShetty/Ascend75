@@ -2,9 +2,9 @@ package com.ascend75.feature.workout
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.ascend75.core.database.dao.TaskEntryDao
-import com.ascend75.core.database.dao.WorkoutSessionDao
-import com.ascend75.core.database.entities.WorkoutSessionEntity
+import com.ascend75.core.domain.model.WorkoutSession
+import com.ascend75.core.domain.repository.TaskRepository
+import com.ascend75.core.domain.repository.WorkoutRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,8 +29,8 @@ data class WorkoutUiState(
 
 @HiltViewModel
 class WorkoutViewModel @Inject constructor(
-    private val taskEntryDao: TaskEntryDao,
-    private val workoutSessionDao: WorkoutSessionDao
+    private val taskRepository: TaskRepository,
+    private val workoutRepository: WorkoutRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(WorkoutUiState())
@@ -39,7 +39,7 @@ class WorkoutViewModel @Inject constructor(
     /** Feeds the 3-hour rest advisory from the other workout logged on the same challenge day. */
     fun initialize(taskId: String) {
         viewModelScope.launch {
-            val lastFinish = taskEntryDao.getWorkoutTasksForSameDay(taskId)
+            val lastFinish = taskRepository.workoutTasksOnSameDay(taskId)
                 .filter { it.id != taskId }
                 .mapNotNull { it.completedAt }
                 .maxOrNull()
@@ -104,9 +104,9 @@ class WorkoutViewModel @Inject constructor(
             val finishedAt = System.currentTimeMillis()
             val durationSeconds = (TOTAL_SECONDS - state.remainingSeconds).coerceAtLeast(0)
 
-            taskEntryDao.updateTaskCompletion(taskId, isCompleted = true, completedAt = finishedAt)
-            workoutSessionDao.insert(
-                WorkoutSessionEntity(
+            taskRepository.setCompletion(taskId, isCompleted = true, completedAt = finishedAt)
+            workoutRepository.addSession(
+                WorkoutSession(
                     id = UUID.randomUUID().toString(),
                     taskEntryId = taskId,
                     durationSeconds = durationSeconds,

@@ -1,6 +1,6 @@
 package com.ascend75.feature.onboarding
 
-import com.ascend75.core.common.domain.ChallengeMode
+import com.ascend75.core.domain.model.ChallengeMode
 
 data class OnboardingUiState(
     val currentStep: Int = 1,

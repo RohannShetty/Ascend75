@@ -5,12 +5,12 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.ascend75.core.crypto.BiometricAuthHelper
 import com.ascend75.core.crypto.VaultFileStorage
-import com.ascend75.core.database.dao.ChallengeDao
-import com.ascend75.core.database.dao.DailyRecordDao
-import com.ascend75.core.database.dao.ProgressPhotoDao
-import com.ascend75.core.database.dao.TaskEntryDao
-import com.ascend75.core.database.entities.ProgressPhotoEntity
-import com.ascend75.core.datastore.AscendPreferencesDataSource
+import com.ascend75.core.domain.model.HabitType
+import com.ascend75.core.domain.repository.ChallengeRepository
+import com.ascend75.core.domain.repository.DailyRecordRepository
+import com.ascend75.core.domain.repository.SettingsRepository
+import com.ascend75.core.domain.repository.TaskRepository
+import com.ascend75.core.domain.repository.VaultRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,11 +50,11 @@ data class PhotoVaultUiState(
 class PhotoVaultViewModel @Inject constructor(
     private val vaultFileStorage: VaultFileStorage,
     private val biometricAuthHelper: BiometricAuthHelper,
-    private val taskEntryDao: TaskEntryDao,
-    private val progressPhotoDao: ProgressPhotoDao,
-    private val challengeDao: ChallengeDao,
-    private val dailyRecordDao: DailyRecordDao,
-    private val preferencesDataSource: AscendPreferencesDataSource
+    private val taskRepository: TaskRepository,
+    private val vaultRepository: VaultRepository,
+    private val challengeRepository: ChallengeRepository,
+    private val dailyRecordRepository: DailyRecordRepository,
+    private val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PhotoVaultUiState())
@@ -68,7 +68,7 @@ class PhotoVaultViewModel @Inject constructor(
 
     private fun observeVaultPhotos() {
         viewModelScope.launch {
-            progressPhotoDao.observeVaultPhotos().collect { photos ->
+            vaultRepository.observeVaultPhotos().collect { photos ->
                 _uiState.update { state ->
                     state.copy(
                         photos = photos.map { photo ->
@@ -87,13 +87,13 @@ class PhotoVaultViewModel @Inject constructor(
     /** Resolves which day and which PHOTO task the vault is currently capturing for. */
     private fun observeCurrentDay() {
         viewModelScope.launch {
-            challengeDao.observeActiveChallenge()
+            challengeRepository.observeActiveChallenge()
                 .distinctUntilChanged()
                 .flatMapLatest { challenge ->
                     if (challenge == null) {
                         flowOf(null)
                     } else {
-                        dailyRecordDao.observeDailyRecordsForChallenge(challenge.id)
+                        dailyRecordRepository.observeRecordsForChallenge(challenge.id)
                     }
                 }
                 .collect { records ->
@@ -101,11 +101,11 @@ class PhotoVaultViewModel @Inject constructor(
                     if (latest == null) {
                         _uiState.update { it.copy(dayNumber = 1, taskId = null) }
                     } else {
-                        val withTasks = dailyRecordDao.getDailyRecordWithTasks(
+                        val tasks = dailyRecordRepository.tasksForDay(
                             latest.challengeInstanceId,
                             latest.dayNumber
                         )
-                        val photoTaskId = withTasks?.tasks?.firstOrNull { it.habitType == "PHOTO" }?.id
+                        val photoTaskId = tasks.firstOrNull { it.habitType == HabitType.PHOTO }?.id
                         _uiState.update { it.copy(dayNumber = latest.dayNumber, taskId = photoTaskId) }
                     }
                 }
@@ -114,7 +114,7 @@ class PhotoVaultViewModel @Inject constructor(
 
     private fun observeBiometricPreference() {
         viewModelScope.launch {
-            preferencesDataSource.userPreferencesFlow.collect { prefs ->
+            settingsRepository.preferences.collect { prefs ->
                 _uiState.update { it.copy(isBiometricEnabled = prefs.isBiometricEnabled) }
             }
         }
@@ -177,16 +177,14 @@ class PhotoVaultViewModel @Inject constructor(
                 imageBytes.fill(0)
 
                 val now = System.currentTimeMillis()
-                taskEntryDao.updateTaskCompletion(taskId, isCompleted = true, completedAt = now)
-                progressPhotoDao.insert(
-                    ProgressPhotoEntity(
-                        id = UUID.randomUUID().toString(),
-                        taskEntryId = taskId,
-                        encryptedFilePath = encryptedFile.absolutePath,
-                        photoHash = photoHash,
-                        fileSizeBytes = encryptedFile.length(),
-                        capturedAt = now
-                    )
+                taskRepository.setCompletion(taskId, isCompleted = true, completedAt = now)
+                vaultRepository.addPhoto(
+                    id = UUID.randomUUID().toString(),
+                    taskEntryId = taskId,
+                    encryptedFilePath = encryptedFile.absolutePath,
+                    photoHash = photoHash,
+                    fileSizeBytes = encryptedFile.length(),
+                    capturedAt = now
                 )
 
                 _uiState.update { it.copy(isCapturing = false, captureCompleted = true, errorMessage = null) }

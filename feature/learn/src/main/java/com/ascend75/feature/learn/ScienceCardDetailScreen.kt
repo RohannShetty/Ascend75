@@ -22,14 +22,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.ascend75.core.database.entities.ScienceCardEntity
+import com.ascend75.core.domain.model.ScienceCard
 import com.ascend75.core.designsystem.components.GlassCard
 import com.ascend75.core.designsystem.theme.AscendPalette
 import com.ascend75.core.designsystem.theme.AscendTypography
 
 @Composable
 fun ScienceCardDetailScreen(
-    card: ScienceCardEntity,
+    card: ScienceCard,
     onBack: () -> Unit,
     onToggleBookmark: () -> Unit,
     modifier: Modifier = Modifier

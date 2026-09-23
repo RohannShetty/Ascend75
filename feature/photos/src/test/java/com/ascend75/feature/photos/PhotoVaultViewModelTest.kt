@@ -3,18 +3,16 @@ package com.ascend75.feature.photos
 import androidx.fragment.app.FragmentActivity
 import com.ascend75.core.crypto.BiometricAuthHelper
 import com.ascend75.core.crypto.VaultFileStorage
-import com.ascend75.core.database.dao.ChallengeDao
-import com.ascend75.core.database.dao.DailyRecordDao
-import com.ascend75.core.database.dao.ProgressPhotoDao
-import com.ascend75.core.database.dao.TaskEntryDao
-import com.ascend75.core.database.entities.ProgressPhotoEntity
-import com.ascend75.core.datastore.AscendPreferencesDataSource
-import com.ascend75.core.datastore.UserPreferences
+import com.ascend75.core.domain.model.UserPreferences
+import com.ascend75.core.domain.repository.ChallengeRepository
+import com.ascend75.core.domain.repository.DailyRecordRepository
+import com.ascend75.core.domain.repository.SettingsRepository
+import com.ascend75.core.domain.repository.TaskRepository
+import com.ascend75.core.domain.repository.VaultRepository
 import io.mockk.coEvery
 import io.mockk.coVerify
 import io.mockk.every
 import io.mockk.mockk
-import io.mockk.slot
 import io.mockk.verify
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -41,20 +39,20 @@ class PhotoVaultViewModelTest {
 
     private val vaultFileStorage = mockk<VaultFileStorage>()
     private val biometricAuthHelper = mockk<BiometricAuthHelper>(relaxed = true)
-    private val taskEntryDao = mockk<TaskEntryDao>(relaxed = true)
-    private val progressPhotoDao = mockk<ProgressPhotoDao>(relaxed = true)
-    private val challengeDao = mockk<ChallengeDao>(relaxed = true)
-    private val dailyRecordDao = mockk<DailyRecordDao>(relaxed = true)
-    private val preferencesDataSource = mockk<AscendPreferencesDataSource>()
+    private val taskRepository = mockk<TaskRepository>(relaxed = true)
+    private val vaultRepository = mockk<VaultRepository>(relaxed = true)
+    private val challengeRepository = mockk<ChallengeRepository>(relaxed = true)
+    private val dailyRecordRepository = mockk<DailyRecordRepository>(relaxed = true)
+    private val settingsRepository = mockk<SettingsRepository>()
 
     private val preferences = MutableStateFlow(UserPreferences(isBiometricEnabled = false))
 
     @Before
     fun setUp() {
         Dispatchers.setMain(UnconfinedTestDispatcher())
-        every { preferencesDataSource.userPreferencesFlow } returns preferences
-        every { challengeDao.observeActiveChallenge() } returns flowOf(null)
-        every { progressPhotoDao.observeVaultPhotos() } returns flowOf(emptyList())
+        every { settingsRepository.preferences } returns preferences
+        every { challengeRepository.observeActiveChallenge() } returns flowOf(null)
+        every { vaultRepository.observeVaultPhotos() } returns flowOf(emptyList())
     }
 
     @After
@@ -65,11 +63,11 @@ class PhotoVaultViewModelTest {
     private fun viewModel() = PhotoVaultViewModel(
         vaultFileStorage = vaultFileStorage,
         biometricAuthHelper = biometricAuthHelper,
-        taskEntryDao = taskEntryDao,
-        progressPhotoDao = progressPhotoDao,
-        challengeDao = challengeDao,
-        dailyRecordDao = dailyRecordDao,
-        preferencesDataSource = preferencesDataSource
+        taskRepository = taskRepository,
+        vaultRepository = vaultRepository,
+        challengeRepository = challengeRepository,
+        dailyRecordRepository = dailyRecordRepository,
+        settingsRepository = settingsRepository
     )
 
     @Test
@@ -146,15 +144,19 @@ class PhotoVaultViewModelTest {
 
         vault.saveCapturedPhoto("photo-task", dayNumber = 4, imageBytes = plaintext) { }
 
-        val inserted = slot<ProgressPhotoEntity>()
-        coVerify { progressPhotoDao.insert(capture(inserted)) }
-        assertEquals("photo-task", inserted.captured.taskEntryId)
-        assertEquals(encryptedFile.absolutePath, inserted.captured.encryptedFilePath)
-        assertEquals(encryptedFile.length(), inserted.captured.fileSizeBytes)
-        assertEquals(expectedHash, inserted.captured.photoHash)
-        assertEquals(64, inserted.captured.photoHash.length)
+        coVerify {
+            vaultRepository.addPhoto(
+                id = any(),
+                taskEntryId = "photo-task",
+                encryptedFilePath = encryptedFile.absolutePath,
+                photoHash = expectedHash,
+                fileSizeBytes = encryptedFile.length(),
+                capturedAt = any()
+            )
+        }
+        assertEquals(64, expectedHash.length)
 
-        coVerify { taskEntryDao.updateTaskCompletion("photo-task", true, any()) }
+        coVerify { taskRepository.setCompletion("photo-task", true, any()) }
 
         assertTrue("Plaintext must be zeroed after encryption", plaintext.all { it == 0.toByte() })
         assertFalse(vault.uiState.value.isCapturing)
@@ -173,7 +175,7 @@ class PhotoVaultViewModelTest {
 
         assertNotNull(vault.uiState.value.errorMessage)
         assertFalse(vault.uiState.value.isCapturing)
-        coVerify(exactly = 0) { progressPhotoDao.insert(any()) }
+        coVerify(exactly = 0) { vaultRepository.addPhoto(any(), any(), any(), any(), any(), any()) }
     }
 
     @Test

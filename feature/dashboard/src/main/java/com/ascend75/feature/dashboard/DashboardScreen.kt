@@ -23,7 +23,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.ascend75.core.database.entities.TaskEntryEntity
+import com.ascend75.core.domain.model.HabitType
+import com.ascend75.core.domain.model.TaskEntry
 import com.ascend75.core.designsystem.components.AscendProgressRing
 import com.ascend75.core.designsystem.components.GlassCard
 import com.ascend75.core.designsystem.components.HabitCheckCard
@@ -38,7 +39,7 @@ import java.util.Locale
 @Composable
 fun DashboardScreen(
     viewModel: DashboardViewModel,
-    onOpenTracker: (TaskEntryEntity) -> Unit,
+    onOpenTracker: (TaskEntry) -> Unit,
     onNavigateToScienceLibrary: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
@@ -210,7 +211,7 @@ fun DashboardScreen(
                     onSaveNotes = { notes ->
                         viewModel.saveTaskNotes(task.id, notes)
                     },
-                    onOpenTracker = if (task.habitType == "DIET") null else { { onOpenTracker(task) } }
+                    onOpenTracker = if (task.habitType == HabitType.DIET) null else { { onOpenTracker(task) } }
                 )
             }
 
@@ -273,19 +274,19 @@ private data class HabitPresentation(
     val subtitle: String
 )
 
-private fun habitPresentation(habitType: String, targetValue: Double, currentValue: Double): HabitPresentation =
+private fun habitPresentation(habitType: HabitType, targetValue: Double, currentValue: Double): HabitPresentation =
     when (habitType) {
-        "WORKOUT_1" -> HabitPresentation("Outdoor Workout (45m)", "Physical Discipline", "Mandatory outdoor session")
-        "WORKOUT_2" -> HabitPresentation("Second Workout (45m)", "Physical Discipline", "Separated by 3+ hours")
-        "WATER" -> HabitPresentation(
+        HabitType.WORKOUT_1 -> HabitPresentation("Outdoor Workout (45m)", "Physical Discipline", "Mandatory outdoor session")
+        HabitType.WORKOUT_2 -> HabitPresentation("Second Workout (45m)", "Physical Discipline", "Separated by 3+ hours")
+        HabitType.WATER -> HabitPresentation(
             "Hydration (${targetValue.toInt()} ml)",
             "Physiological Fuel",
             "${currentValue.toInt()} ml logged"
         )
-        "READING" -> HabitPresentation("Read 10 Pages", "Cognitive Growth", "Non-fiction / personal development")
-        "DIET" -> HabitPresentation("Strict Clean Diet", "Nutrition Integrity", "Zero alcohol, zero cheat meals")
-        "PHOTO" -> HabitPresentation("Progress Photo", "Visual Accountability", "Hardware-encrypted vault")
-        else -> HabitPresentation("Custom Habit", "Daily Practice", "Discipline requirement")
+        HabitType.READING -> HabitPresentation("Read 10 Pages", "Cognitive Growth", "Non-fiction / personal development")
+        HabitType.DIET -> HabitPresentation("Strict Clean Diet", "Nutrition Integrity", "Zero alcohol, zero cheat meals")
+        HabitType.PHOTO -> HabitPresentation("Progress Photo", "Visual Accountability", "Hardware-encrypted vault")
+        HabitType.CUSTOM -> HabitPresentation("Custom Habit", "Daily Practice", "Discipline requirement")
     }
 
 private fun formatSleepCutoff(hour: Int, minute: Int): String {
