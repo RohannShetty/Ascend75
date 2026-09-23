@@ -29,9 +29,12 @@ android {
     }
 }
 
-dependencies {
-    implementation(project(":core:common"))
+ksp {
+    // Room's exportSchema = true needs a schema location, otherwise upgrades have no diff to review.
+    arg("room.schemaLocation", "$projectDir/schemas")
+}
 
+dependencies {
     implementation(libs.androidx.room.runtime)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)

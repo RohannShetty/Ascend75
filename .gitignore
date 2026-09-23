@@ -49,4 +49,6 @@ desktop.ini
 
 # Agent caches and temporary indexes
 .codegraph/
-graphify-out/cache/
+graphify-out/
+# Local scratch
+transcripts/
